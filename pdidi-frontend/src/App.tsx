@@ -1,13 +1,19 @@
 import './App.css'
 import { RouterProvider } from 'react-router-dom'
 import { route } from './router/router'
+import Header from './components/ui/header'
+import Footer from './components/ui/footer'
 
 function App() {
 
   return (
-    <>
-      <RouterProvider router={route}/>
-    </>
+    <div className='w-full h-full flex flex-col'>
+      <Header/>
+      <div className='flex-1'>
+        <RouterProvider router={route}/>
+      </div>
+      <Footer/>
+    </div>
   )
 }
 
