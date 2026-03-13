@@ -2,12 +2,12 @@ export default function Header(
     {user} : {user?:string}
 ) {
     return (
-        <div className="w-full flex items-center justify-between py-5">
+        <div className="w-full flex items-center justify-between py-5 px-6 border-b border-gray-200">
             <div className="flex flex-col">
-                <h1 className="text-2xl bold">Pdidi</h1>
+                <h1 className="text-2xl font-semibold text-gray-800">Pdidi</h1>
             </div>
             <div>
-                <p>{user}</p>
+                <p className="text-gray-600">{user}</p>
             </div>
         </div>
     )
