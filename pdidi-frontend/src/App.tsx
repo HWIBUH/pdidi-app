@@ -9,7 +9,7 @@ function App() {
   return (
     <div className='w-full h-full flex flex-col'>
       <Header/>
-      <div className='flex-1'>
+      <div className='w-full flex flex-1 justify-center items-center'>
         <RouterProvider router={route}/>
       </div>
       <Footer/>
