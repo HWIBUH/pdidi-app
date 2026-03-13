@@ -2,6 +2,8 @@ const express = require('express');
 const models = require('../models');
 const { authenticate, isAdmin } = require('../middlewares/middleware');
 const Menu = models.Menu;
+const MenuIngredientsMapping = models.MenuIngredientsMapping
+const Ingredients = models.Ingredients
 
 const router = express.Router();
 
@@ -29,8 +31,8 @@ router.post('/', authenticate, isAdmin, async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const menuItems = await Menu.findAll();
-    res.json(menuItems);
+    const menus = await Menu.findAll()
+    res.json(menus);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -52,8 +52,42 @@ router.put('/:id', authenticate, isAdmin, async (req, res) => {
       return res.status(404).json({ error: 'Ingredient not found' });
     }
     
+    const wasAvailable = ingredient.available;
     ingredient.available = !ingredient.available;
     await ingredient.save();
+
+    const MenuIngredientsMapping = models.MenuIngredientsMapping;
+    const Menu = models.Menu;
+    
+    const mappings = await MenuIngredientsMapping.findAll({
+      where: { ingredients_id: req.params.id }
+    });
+    
+    if (!ingredient.available) {
+      for (const mapping of mappings) {
+        await Menu.update(
+          { available: false },
+          { where: { id: mapping.menu_id } }
+        );
+      }
+    } 
+    else if (ingredient.available && !wasAvailable) {
+      for (const mapping of mappings) {
+        const menuMappings = await MenuIngredientsMapping.findAll({
+          where: { menu_id: mapping.menu_id },
+          include: [{ model: Ingredients, as: 'ingredient' }]
+        });
+        
+        const allAvailable = menuMappings.every(m => m.ingredient.available);
+        if (allAvailable) {
+          await Menu.update(
+            { available: true },
+            { where: { id: mapping.menu_id } }
+          );
+        }
+      }
+    }
+
     res.json(ingredient);
   } catch (error) {
     res.status(500).json({ error: error.message });
