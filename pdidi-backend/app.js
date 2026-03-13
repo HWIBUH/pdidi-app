@@ -16,6 +16,7 @@ const menuRoutes = require('./routes/menu.js')
 const ingredientRoutes = require('./routes/ingredients.js')
 const menuIngredientsRoutes = require('./routes/menuingredientsmapping.js');
 const orderRoutes = require('./routes/order.js');
+const balanceRoutes = require('./routes/balance.js');
 
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
@@ -23,6 +24,8 @@ app.use('/api/menu', menuRoutes)
 app.use('/api/ingredients', ingredientRoutes)
 app.use('/api/menu-ingredients', menuIngredientsRoutes);
 app.use('/api/order', orderRoutes)
+app.use('/api/balance', balanceRoutes)
+
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.get('/', (req, res) => {
