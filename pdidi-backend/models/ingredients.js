@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Ingredients.hasMany(models.MenuIngredientsMapping, {
+        foreignKey: 'ingredients_id',
+        as: 'menus'
+      });
     }
   }
   Ingredients.init({

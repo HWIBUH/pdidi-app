@@ -21,6 +21,10 @@ router.post('/', async (req, res) => {
     if (!user || !menu) {
       return res.status(404).json({ error: 'User or menu not found' });
     }
+
+    if (!menu.available) {
+      return res.status(400).json({ error: 'Menu item is currently unavailable' });
+    }
     
     const order = await Order.create({
       user_id,
