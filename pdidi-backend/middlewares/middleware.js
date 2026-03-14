@@ -5,7 +5,11 @@ require('dotenv').config();
 
 async function authenticate(req, res, next) {
   try {
-    const token = req.headers['authorization']?.split(' ')[1];
+    let token = req.headers['authorization']?.split(' ')[1];
+
+    if(!token && req.cookies){
+      token = req.cookies.adminToken
+    }
     
     if (!token) {
       return res.status(401).json({ error: 'No token provided' });

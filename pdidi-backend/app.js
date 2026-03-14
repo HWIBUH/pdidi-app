@@ -1,6 +1,8 @@
 const express = require('express');
 const { connectDB } = require("./database/database.js");
 const { swaggerUi, specs } = require('./swagger.js');
+const cookieParser = require('cookie-parser');
+
 
 const app = express();
 const port = 3000;
@@ -9,6 +11,7 @@ connectDB();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser())
 
 const userRoutes = require('./routes/users.js');
 const authRoutes = require('./routes/auth.js')
