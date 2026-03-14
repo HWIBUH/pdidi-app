@@ -34,7 +34,10 @@ if (process.env.NODE_ENV === 'development') {
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 }
 app.get('/', (req, res) => {
-    res.send('API DOCUMENTATION FOR PDIDI WEB, dokumentasi di /api-docs ya');
+    if (process.env.NODE_ENV === 'development') {
+        return res.redirect('/api-docs');
+    }
+    res.send('Catering API');
 });
 
 app.listen(port, () => {
