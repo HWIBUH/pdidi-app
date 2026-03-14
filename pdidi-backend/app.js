@@ -30,7 +30,9 @@ app.use('/api/order', orderRoutes)
 app.use('/api/balance', balanceRoutes)
 
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+if (process.env.NODE_ENV === 'development') {
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+}
 app.get('/', (req, res) => {
     res.send('API DOCUMENTATION FOR PDIDI WEB, dokumentasi di /api-docs ya');
 });
