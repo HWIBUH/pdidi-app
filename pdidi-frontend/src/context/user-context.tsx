@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import type { User } from '@/model/user.model'
 
 interface UserContext {
@@ -7,8 +8,15 @@ interface UserContext {
   logout: () => void
 }
 
-export const useUser = create<UserContext>((set) => ({
-  user: null,
-  setUser: (user) => set({ user }),
-  logout: () => set({ user: null }),
-}))
+export const useUser = create<UserContext>()(
+  persist(
+    (set) => ({
+      user: null,
+      setUser: (user) => set({ user }),
+      logout: () => set({ user: null }),
+    }),
+    {
+      name: 'user-storage',
+    }
+  )
+)
