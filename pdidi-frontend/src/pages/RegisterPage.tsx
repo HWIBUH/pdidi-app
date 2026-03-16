@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useUser } from "@/context/user-context";
 import { register } from "@/service/auth.service";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 export default function RegisterPage() {
@@ -10,6 +11,11 @@ export default function RegisterPage() {
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
+    const { user } = useUser()
+
+    useEffect(() => {
+        if (user) navigate('/menu')
+    }, [user])
 
     async function handleInput() {
         if (!initial.trim()) {

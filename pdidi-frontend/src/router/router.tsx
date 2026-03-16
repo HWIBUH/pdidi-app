@@ -5,6 +5,8 @@ import MenuPage from '@/pages/MenuPage'
 import AdminDashboard from '@/pages/AdminDashboard'
 import AdminTransaction from '@/pages/AdminTransaction'
 import RegisterPage from '@/pages/RegisterPage'
+import { ProtectedRoute } from '@/components/ProtectedRoute'
+import { AdminRoute } from '@/components/AdminRoute'
 
 export const route = createBrowserRouter([
     {
@@ -20,15 +22,15 @@ export const route = createBrowserRouter([
             },
             {
                 path: '/menu',
-                element: <MenuPage />
+                element: <ProtectedRoute><MenuPage /></ProtectedRoute>
             },
             {
                 path: "/admin/dashboard",
-                element: <AdminDashboard />
+                element: <AdminRoute><AdminDashboard /></AdminRoute>
             },
             {
-                path: "admin/transaction",
-                element: <AdminTransaction />
+                path: "/admin/transaction",
+                element: <AdminRoute><AdminTransaction /></AdminRoute>
             }
         ]
     }

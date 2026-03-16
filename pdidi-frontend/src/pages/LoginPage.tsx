@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "@/service/auth.service";
 import { useUser } from "@/context/user-context";
@@ -15,7 +15,11 @@ export default function LoginPage() {
     const [isAdminModalOpen, setIsAdminModalOpen] = useState(false)
     const [adminCandidate, setAdminCandidate] = useState<LoginResponse>()
     const navigate = useNavigate()
-    const { setUser } = useUser()
+    const { user, setUser } = useUser()
+
+    useEffect(() => {
+        if(user) navigate('/menu')
+    }, [user])
 
     async function handleInput() {
         if (!initial.trim()) {
