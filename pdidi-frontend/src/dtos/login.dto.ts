@@ -6,5 +6,5 @@ export interface LoginResponse {
     message: string
     userId: number
     username: string
-    role: string
+    role: 'user' | 'admin'
 }

@@ -114,6 +114,10 @@ router.post('/login', async (req, res) => {
     if (!username) {
       return res.status(400).json({ error: 'Username required' });
     }
+
+    if (!usernamePattern.test(username)) {
+      return res.status(400).json({ error: 'Username must follow pattern: XX##-# (e.g., GS25-1, EV25-1)' });
+    }
     
     const user = await User.findOne({ where: { username } });
     if (!user) {
