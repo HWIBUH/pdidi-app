@@ -32,7 +32,6 @@ router.post('/', authenticate, isAdmin, async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const menus = await Menu.findAll()
-    console.log(menus)
     res.json(menus);
   } catch (error) {
     res.status(500).json({ error: error.message });

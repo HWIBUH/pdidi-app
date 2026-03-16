@@ -1,17 +1,11 @@
-import { useState, type ReactNode } from "react"
-import { UserContext } from "./user-hook"
+import { create } from 'zustand'
 
-
-interface Props {
-  children: ReactNode
+interface User {
+  username: string | null
+  setUsername: (username: string | null) => void
 }
 
-export function UserProvider({ children }: Props) {
-  const [username, setUsername] = useState<string | null>(null)
-
-  return (
-    <UserContext.Provider value={{ username, setUsername }}>
-      {children}
-    </UserContext.Provider>
-  )
-}
+export const useUser = create<User>((set) => ({
+  username: null,
+  setUsername: (username) => set({ username }),
+}))

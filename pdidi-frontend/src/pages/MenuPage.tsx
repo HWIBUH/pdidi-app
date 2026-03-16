@@ -13,12 +13,13 @@ type SortOption = {
 }
 
 export default function MenuPage() {
+    const maxPrice = 50000
     const [menus, setMenus] = useState<Menu[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [order, setOrder] = useState(true)
     const [sort, setSort] = useState(1)
-    const [priceFilter, setPriceFilter] = useState(50)
+    const [priceFilter, setPriceFilter] = useState(maxPrice)
     const [searchQuery, setSearchQuery] = useState("")
 
     useEffect(() => {
@@ -137,7 +138,7 @@ export default function MenuPage() {
                                                     <p className="text-sm text-gray-500">{item.description}</p>
                                                 )}
                                             </div>
-                                            <span className="font-bold text-blue-600">${item.price}</span>
+                                            <span className="font-bold text-blue-600">{item.price}</span>
                                         </div>
                                         <Button
                                             className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors h-10"
@@ -159,19 +160,19 @@ export default function MenuPage() {
                         <div className="flex flex-col gap-4">
                             <div className="flex flex-col gap-3">
                                 <Label className="text-sm font-medium text-gray-700">
-                                    Max Price: ${priceFilter}
+                                    Max Price: {priceFilter}
                                 </Label>
                                 <input
                                     type="range"
                                     min="0"
-                                    max="50"
+                                    max={maxPrice}
                                     value={priceFilter}
                                     onChange={(e) => setPriceFilter(Number(e.target.value))}
                                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                                 />
                                 <div className="flex justify-between text-xs text-gray-500 font-medium">
-                                    <span>$0</span>
-                                    <span>$50</span>
+                                    <span>0</span>
+                                    <span>{maxPrice}</span>
                                 </div>
                             </div>
                         </div>

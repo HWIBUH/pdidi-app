@@ -1,13 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useUser } from "@/context/user-hook";
+import { useUser } from "@/context/user-context";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 
 export default function LoginPage() {
-
-    const userContext = useUser()
+    const { setUsername } = useUser()
     const [initial, setInitial] = useState("")
     const [error, setError] = useState(false)
     const pattern = /^[A-Z]{2}\d{2}-\d{1,2}$/
@@ -17,7 +16,7 @@ export default function LoginPage() {
         const usr = initial.trim()
         if(pattern.test(usr)) {
             setError(false)
-            userContext.setUsername(usr)
+            setUsername(usr)
             navigate("/menu")
         } {
             setError(true)
