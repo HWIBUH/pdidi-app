@@ -1,6 +1,8 @@
 const express = require('express');
 const { connectDB } = require("./database/database.js");
 const { swaggerUi, specs } = require('./swagger.js');
+const cookieParser = require('cookie-parser');
+
 
 const app = express();
 const port = 3000;
@@ -9,6 +11,7 @@ connectDB();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser())
 
 const userRoutes = require('./routes/users.js');
 const authRoutes = require('./routes/auth.js')
@@ -27,9 +30,14 @@ app.use('/api/order', orderRoutes)
 app.use('/api/balance', balanceRoutes)
 
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+if (process.env.NODE_ENV === 'development') {
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+}
 app.get('/', (req, res) => {
-    res.send('API DOCUMENTATION FOR PDIDI WEB, dokumentasi di /api-docs ya');
+    if (process.env.NODE_ENV === 'development') {
+        return res.redirect('/api-docs');
+    }
+    res.send('Catering API');
 });
 
 app.listen(port, () => {

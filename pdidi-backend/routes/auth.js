@@ -180,7 +180,7 @@ router.post('/validate-admin', (req, res) => {
 
         res.cookie('adminToken', token, {
           httpOnly: true,
-          secure: false,  
+          secure: process.env.NODE_ENV === "production",  
           path: '/',
           maxAge: 86400000 
         });

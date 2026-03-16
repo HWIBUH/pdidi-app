@@ -2,8 +2,6 @@ ARG NODE_VERSION=25.6.0
 
 FROM node:${NODE_VERSION}-alpine
 
-ENV NODE_ENV $NODE_ENV
-
 WORKDIR /usr/src/app
 
 RUN --mount=type=bind,source=package.json,target=package.json \
