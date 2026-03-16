@@ -1,5 +1,5 @@
 export default function Header(
-    {user} : {user?:string}
+    {user} : {user:string | null}
 ) {
     return (
         <div className="w-full flex items-center justify-between py-5 px-6 border-b border-gray-200">

@@ -8,6 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const api = axios.create({
   baseURL: import.meta.env.BASE_URL,
+  withCredentials: true,
   timeout: 1000,
   headers: {
     'Content-Type': 'application/json',

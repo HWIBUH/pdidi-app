@@ -15,6 +15,14 @@ services:
       timeout: 5s
       retries: 10
 
+  frontend:
+    build:
+      context: ./pdidi-frontend
+    environment:
+      NODE_ENV: production
+    ports:
+      - 5173:5173
+
   server:
     build:
       context: ./pdidi-backend
