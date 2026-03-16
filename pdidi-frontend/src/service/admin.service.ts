@@ -1,4 +1,5 @@
 import type { BalanceRequest, BalanceResponse } from "@/dtos/balance.dto"
+import type { OrderResponse } from "@/dtos/order.dto"
 import { api } from "@/lib/axios"
 
 export async function getBalance(): Promise<BalanceResponse> {
@@ -16,7 +17,12 @@ export async function subtractBalance(req: BalanceRequest): Promise<BalanceRespo
     return res.data
 }
 
-export async function getOrders() {
+export async function getOrders(): Promise<OrderResponse[]> {
     const res = await api.get("/order")
+    return res.data
+}
+
+export async function toggleOrder(order_id: number){
+    const res = await api.patch(`/order/${order_id}/toggle`)
     return res.data
 }

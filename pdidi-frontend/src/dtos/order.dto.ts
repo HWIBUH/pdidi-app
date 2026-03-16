@@ -1,0 +1,13 @@
+import type { Menu } from "@/model/menu.model";
+import type { User } from "@/model/user.model";
+
+export interface OrderResponse {
+    id: number,
+    user_id: number,
+    menu_id: number,
+    done: boolean,
+    createdAt: Date,
+    updatedAt: Date,
+    user?: User,
+    menu?: Menu
+}
