@@ -18,10 +18,13 @@ services:
   frontend:
     build:
       context: ./pdidi-frontend
-    environment:
-      NODE_ENV: production
+    env_file:
+      - ./pdidi-frontend/.env
     ports:
       - 5173:5173
+    volumes:
+      - ./pdidi-frontend:/usr/src/app
+      - /usr/src/app/node_modules
 
   server:
     build:
@@ -32,10 +35,13 @@ services:
     environment:
       DB_HOST: db
     ports:
-      - "5174:3000"
+      - 3000:3000
     depends_on:
       db:
         condition: service_healthy
+    volumes:
+      - ./pdidi-backend:/usr/src/app
+      - /usr/src/app/node_modules
 
 volumes:
   db_data:

@@ -14,4 +14,4 @@ USER node
 COPY . .
 
 EXPOSE 3000
-CMD sh -c "npx sequelize-cli db:migrate && npm start"
+CMD sh -c "npx sequelize-cli db:migrate && npm run dev"

@@ -1,17 +1,12 @@
-import type { Menu } from "@/model/menu.model";
+import { api } from '@/lib/axios'
+import { type Menu } from '@/model/menu.model'
 
-export function order() {
-
-}
-
-export async function getAllMenus():Promise<Menu[]> {
-
-    const dummy:Menu[] = [
-        {
-            name: "Ayam Cabe Garam",
-            popularity: 100,
-            price: 230000
-        }
-    ]
-    return dummy
+export async function getAllMenus(): Promise<Menu[]> {
+  try {
+    const response = await api.get('/menu')
+    console.log(response)
+    return response.data
+  } catch (error) {
+    throw error
+  }
 }

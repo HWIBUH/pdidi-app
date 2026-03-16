@@ -1,9 +1,8 @@
-import { getAllMenus } from "@/service/menu.service"
-
 export type Menu = {
-    name: string,
-    price: number,
-    popularity: number
+  id: number
+  name: string
+  price: number
+  description?: string
+  image?: string
+  available: boolean
 }
-
-export const menus:Menu[] = await getAllMenus()

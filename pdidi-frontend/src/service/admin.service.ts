@@ -1,7 +1,7 @@
-import { api } from "@/lib/utils";
+import { api } from "@/lib/axios"
 
 export async function getIngredients() {
-    const res = await api.get("/api/menu/")
+    const res = await api.get("/menu/")
     console.log(res)
 }
 
