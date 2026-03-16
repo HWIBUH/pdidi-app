@@ -8,6 +8,7 @@ import RegisterPage from '@/pages/RegisterPage'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { AdminRoute } from '@/components/AdminRoute'
 import AdminManage from '@/pages/AdminManage'
+import OrderHistoryPage from '@/pages/OrderHistoryPage'
 
 export const route = createBrowserRouter([
     {
@@ -24,6 +25,10 @@ export const route = createBrowserRouter([
             {
                 path: '/menu',
                 element: <ProtectedRoute><MenuPage /></ProtectedRoute>
+            },
+            {
+                path: "/orders",
+                element: <ProtectedRoute><OrderHistoryPage /></ProtectedRoute>
             },
             {
                 path: "/admin/dashboard",

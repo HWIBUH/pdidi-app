@@ -2,7 +2,7 @@ import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, ChevronsDown, ChevronsUp, Search } from "lucide-react";
+import { ChevronRight, ChevronsDown, ChevronsUp, Search, Utensils } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getAllMenus } from "@/service/menu.service";
 import { type Menu } from "@/model/menu.model";
@@ -142,7 +142,7 @@ export default function MenuPage() {
                                         <div key={item.id} className={`border rounded-lg overflow-hidden flex flex-col gap-0 hover:shadow-lg transition-shadow bg-white ${!item.available ? 'opacity-60 border-gray-300' : 'border-gray-200 hover:shadow-lg'
                                             }`}>
                                             <div className="w-full h-40 bg-linear-to-br from-gray-100 to-gray-50 rounded-t-lg flex items-center justify-center text-6xl overflow-hidden">
-                                                {item.image || "X"}
+                                                {item.image || <Utensils/>}
                                             </div>
 
                                             <div className="flex flex-col flex-1 p-4 gap-3">
