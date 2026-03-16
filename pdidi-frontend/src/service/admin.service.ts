@@ -17,5 +17,6 @@ export async function subtractBalance(req: BalanceRequest): Promise<BalanceRespo
 }
 
 export async function getOrders() {
-    
+    const res = await api.get("/order")
+    return res.data
 }

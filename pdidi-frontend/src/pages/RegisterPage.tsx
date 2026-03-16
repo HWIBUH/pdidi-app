@@ -14,7 +14,10 @@ export default function RegisterPage() {
     const { user } = useUser()
 
     useEffect(() => {
-        if (user) navigate('/menu')
+        if (user) {
+            if (user.role === 'admin') navigate('/admin/dashboard', { replace: true })
+            else navigate('/menu', { replace: true })
+        }
     }, [user])
 
     async function handleInput() {

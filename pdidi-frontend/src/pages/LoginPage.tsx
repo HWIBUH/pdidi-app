@@ -18,7 +18,10 @@ export default function LoginPage() {
     const { user, setUser } = useUser()
 
     useEffect(() => {
-        if(user) navigate('/menu')
+        if (user) {
+            if (user.role === 'admin') navigate('/admin/dashboard', { replace: true })
+            else navigate('/menu', { replace: true })
+        }
     }, [user])
 
     async function handleInput() {
@@ -32,7 +35,7 @@ export default function LoginPage() {
 
         try {
             const user = await login({ username: initial })
-            
+
             if (user.role === 'admin') {
                 setAdminCandidate(user)
                 setIsAdminModalOpen(true)
@@ -52,7 +55,7 @@ export default function LoginPage() {
     }
 
     const handleAdminSuccess = () => {
-        if(!adminCandidate) return
+        if (!adminCandidate) return
         setUser({
             id: adminCandidate.userId,
             username: adminCandidate.username,
