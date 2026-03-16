@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { register } from "@/service/auth.service";
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 export default function RegisterPage() {
     const [initial, setInitial] = useState("")
@@ -66,6 +66,13 @@ export default function RegisterPage() {
                 >
                     {loading ? "Signing In..." : "Sign In"}
                 </Button>
+
+                <div className="text-center text-sm text-gray-600">
+                    Already have an account?{' '}
+                    <Link to="/" className="text-blue-600 hover:text-blue-700 font-medium">
+                        Login
+                    </Link>
+                </div>
             </div>
         </div>
     )

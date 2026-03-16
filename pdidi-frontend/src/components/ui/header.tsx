@@ -18,14 +18,17 @@ export default function Header(
                 <h1 className="text-2xl font-semibold text-gray-800">Catering Pdidi</h1>
             </div>
             <div className="flex items-center gap-4">
-                <p className="text-gray-600">{user}</p>
                 {user && (
-                    <Button
-                        onClick={handleLogout}
-                        className="h-9 px-4 bg-red-600 hover:bg-red-700 text-white rounded-md font-medium transition-colors"
-                    >
-                        Logout
-                    </Button>
+                    <>
+                        <p className="text-gray-600 animate-bounce">Hello <strong>{user}</strong>!</p>
+
+                        <Button
+                            onClick={handleLogout}
+                            className="h-9 px-4 bg-red-600 hover:bg-red-700 text-white rounded-md font-medium transition-colors"
+                        >
+                            Logout
+                        </Button>
+                    </>
                 )}
             </div>
         </div>
