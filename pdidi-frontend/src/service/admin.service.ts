@@ -1,6 +1,8 @@
 import type { BalanceRequest, BalanceResponse } from "@/dtos/balance.dto"
 import type { OrderResponse } from "@/dtos/order.dto"
 import { api } from "@/lib/axios"
+import type { Ingredient } from "@/model/ingredient.model"
+import type { Menu } from "@/model/menu.model"
 
 export async function getBalance(): Promise<BalanceResponse> {
     const res = await api.get("/balance")
@@ -8,13 +10,21 @@ export async function getBalance(): Promise<BalanceResponse> {
 }
 
 export async function addBalance(req: BalanceRequest): Promise<BalanceResponse> {
-    const res = await api.post("/balance", { amount: req.amount })
-    return res.data
+    try {
+        const res = await api.post("/balance", { amount: req.amount })
+        return res.data
+    } catch (error) {
+        throw error
+    }
 }
 
 export async function subtractBalance(req: BalanceRequest): Promise<BalanceResponse> {
-    const res = await api.post("/balance/subtract", { amount: req.amount })
-    return res.data
+    try {
+        const res = await api.post("/balance/subtract", { amount: req.amount })
+        return res.data
+    } catch (error) {
+        throw error
+    }
 }
 
 export async function getOrders(): Promise<OrderResponse[]> {
@@ -23,6 +33,19 @@ export async function getOrders(): Promise<OrderResponse[]> {
 }
 
 export async function toggleOrder(order_id: number){
-    const res = await api.patch(`/order/${order_id}/toggle`)
-    return res.data
+    try {
+        const res = await api.patch(`/order/${order_id}/toggle`)
+        return res.data
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function mapIngredientToMenu(ingredient: Ingredient, menu: Menu) {
+    try {
+        const res = await api.post('/menu-ingredients', { menu_id: menu.id, ingredients_id: ingredient.id })
+        return res.data
+    } catch (error) {
+        throw error
+    }
 }

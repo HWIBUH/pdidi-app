@@ -9,7 +9,7 @@ export default function Layout() {
   return (
     <div className='w-full h-full flex flex-col'>
       <Header user={user?.username} />
-      <div className='w-full h-9/10 flex-1'>
+      <div className='flex-1 overflow-auto w-full bg-white'>
         <Outlet />
       </div>
       <Footer />

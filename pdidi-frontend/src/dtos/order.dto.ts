@@ -11,3 +11,8 @@ export interface OrderResponse {
     user?: User,
     menu?: Menu
 }
+
+export interface OrderRequest {
+    user_id: number,
+    menu_id: number
+}

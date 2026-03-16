@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { BalanceResponse } from "@/dtos/balance.dto";
 import type { OrderResponse } from "@/dtos/order.dto";
+import { useNavigate } from "react-router";
+import { ChevronRight } from "lucide-react";
 
 export default function AdminDashboard() {
     const [balanceData, setBalanceData] = useState<BalanceResponse | null>(null)
@@ -13,6 +15,7 @@ export default function AdminDashboard() {
     const [amount, setAmount] = useState("")
     const [operationLoading, setOperationLoading] = useState(false)
     const [toggleLoading, setToggleLoading] = useState<number | null>(null)
+    const navigate = useNavigate()
 
     const fetchData = () => {
         Promise.all([
@@ -81,44 +84,55 @@ export default function AdminDashboard() {
 
     if (loading) return <div className="p-6">Loading...</div>
 
-    const lastUpdated = balanceData?.updatedAt 
+    const lastUpdated = balanceData?.updatedAt
         ? new Date(balanceData.updatedAt).toLocaleString()
         : 'Never'
 
     return (
         <div className="p-6 space-y-6">
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+                <Button
+                    onClick={() => navigate("/admin/manage")}
+                    className="bg-gray-600 hover:bg-gray-700 text-white flex items-center gap-2"
+                >
+                    Manage <ChevronRight className="w-4 h-4" />
+                </Button>
+            </div>
             {error && <div className="p-4 bg-red-50 text-red-500 rounded-lg">{error}</div>}
-            
-            <div className="bg-white rounded-lg shadow p-6 max-w-md">
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">Total Balance</h2>
-                <p className="text-4xl font-bold text-blue-600">Rp.{balanceData?.balance?.toLocaleString()}</p>
-                <p className="text-sm text-gray-500 mt-4">Last updated: {lastUpdated}</p>
+            <div className="flex justify-center">
 
-                <div className="mt-6 flex flex-col gap-4">
-                    <Input
-                        type="number"
-                        placeholder="Enter amount"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        disabled={operationLoading}
-                        className="h-10"
-                    />
-                    
-                    <div className="flex gap-2">
-                        <Button
-                            onClick={handleAdd}
+                <div className="bg-white rounded-lg shadow p-6 max-w-md">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-2">Total Balance</h2>
+                    <p className="text-4xl font-bold text-blue-600">Rp.{balanceData?.balance?.toLocaleString()}</p>
+                    <p className="text-sm text-gray-500 mt-4">Last updated: {lastUpdated}</p>
+
+                    <div className="mt-6 flex flex-col gap-4">
+                        <Input
+                            type="number"
+                            placeholder="Enter amount"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
                             disabled={operationLoading}
-                            className="flex-1 bg-green-600 hover:bg-green-700 text-white"
-                        >
-                            {operationLoading ? "Processing..." : "Add"}
-                        </Button>
-                        <Button
-                            onClick={handleSubtract}
-                            disabled={operationLoading}
-                            className="flex-1 bg-red-600 hover:bg-red-700 text-white"
-                        >
-                            {operationLoading ? "Processing..." : "Subtract"}
-                        </Button>
+                            className="h-10"
+                        />
+
+                        <div className="flex gap-2">
+                            <Button
+                                onClick={handleAdd}
+                                disabled={operationLoading}
+                                className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                            >
+                                {operationLoading ? "Processing..." : "Add"}
+                            </Button>
+                            <Button
+                                onClick={handleSubtract}
+                                disabled={operationLoading}
+                                className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+                            >
+                                {operationLoading ? "Processing..." : "Subtract"}
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -134,6 +148,7 @@ export default function AdminDashboard() {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">ID</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">User</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Menu</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Menu Price</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Status</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Date</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Action</th>
@@ -146,12 +161,12 @@ export default function AdminDashboard() {
                                         <td className="px-6 py-4 text-sm text-gray-900">{order.id}</td>
                                         <td className="px-6 py-4 text-sm text-gray-900">{order.user?.username}</td>
                                         <td className="px-6 py-4 text-sm text-gray-900">{order.menu?.name}</td>
+                                        <td className="px-6 py-4 text-sm text-gray-900">Rp. {order.menu?.price.toLocaleString()}</td>
                                         <td className="px-6 py-4 text-sm">
-                                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                                order.done 
-                                                    ? 'bg-green-100 text-green-800' 
+                                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${order.done
+                                                    ? 'bg-green-100 text-green-800'
                                                     : 'bg-red-300 text-red-800'
-                                            }`}>
+                                                }`}>
                                                 {order.done ? 'Done' : 'Not Done'}
                                             </span>
                                         </td>
@@ -162,11 +177,10 @@ export default function AdminDashboard() {
                                             <Button
                                                 onClick={() => handleToggleOrder(order.id)}
                                                 disabled={toggleLoading === order.id}
-                                                className={`px-3 py-1 text-xs rounded font-medium ${
-                                                    order.done
+                                                className={`px-3 py-1 text-xs rounded font-medium ${order.done
                                                         ? 'bg-gray-600 hover:bg-gray-700 text-white'
                                                         : 'bg-blue-600 hover:bg-blue-700 text-white'
-                                                }`}
+                                                    }`}
                                             >
                                                 {toggleLoading === order.id ? 'Updating...' : order.done ? 'Mark Not Done' : 'Mark Done'}
                                             </Button>

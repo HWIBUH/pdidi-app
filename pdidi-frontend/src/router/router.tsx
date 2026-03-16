@@ -7,6 +7,7 @@ import AdminTransaction from '@/pages/AdminTransaction'
 import RegisterPage from '@/pages/RegisterPage'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { AdminRoute } from '@/components/AdminRoute'
+import AdminManage from '@/pages/AdminManage'
 
 export const route = createBrowserRouter([
     {
@@ -31,6 +32,10 @@ export const route = createBrowserRouter([
             {
                 path: "/admin/transaction",
                 element: <AdminRoute><AdminTransaction /></AdminRoute>
+            },
+            {
+                path: "/admin/manage",
+                element: <AdminRoute><AdminManage /></AdminRoute>
             }
         ]
     }
