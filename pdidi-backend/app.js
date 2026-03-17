@@ -26,6 +26,7 @@ const ingredientRoutes = require('./routes/ingredients.js')
 const menuIngredientsRoutes = require('./routes/menuingredientsmapping.js');
 const orderRoutes = require('./routes/order.js');
 const balanceRoutes = require('./routes/balance.js');
+const discountRoutes = require('./routes/discount.js')
 
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
@@ -34,6 +35,7 @@ app.use('/api/ingredients', ingredientRoutes)
 app.use('/api/menu-ingredients', menuIngredientsRoutes);
 app.use('/api/order', orderRoutes)
 app.use('/api/balance', balanceRoutes)
+app.use('/api/discount', discountRoutes)
 
 
 if (process.env.NODE_ENV === 'development') {

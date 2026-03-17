@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { getBalance, addBalance, subtractBalance, getOrders, toggleOrder, deleteOrder } from "@/service/admin.service";
+import { createDiscount } from "@/service/discount.service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import type { BalanceResponse } from "@/dtos/balance.dto";
 import type { OrderResponse } from "@/dtos/order.dto";
 import { useNavigate } from "react-router";
 import { ChevronRight } from "lucide-react";
+import { formatDateLocal } from "@/utils/format-date";
 
 export default function AdminDashboard() {
     const [balanceData, setBalanceData] = useState<BalanceResponse | null>(null)
@@ -16,6 +19,12 @@ export default function AdminDashboard() {
     const [operationLoading, setOperationLoading] = useState(false)
     const [toggleLoading, setToggleLoading] = useState<number | null>(null)
     const [deleteLoading, setDeleteLoading] = useState<number | null>(null)
+
+    const [discountRate, setDiscountRate] = useState("")
+    const [slotQuantity, setSlotQuantity] = useState("")
+    const [validUntil, setValidUntil] = useState("")
+    const [discountLoading, setDiscountLoading] = useState(false)
+
     const navigate = useNavigate()
 
     const fetchData = () => {
@@ -98,6 +107,35 @@ export default function AdminDashboard() {
         }
     }
 
+    const handleCreateDiscount = async () => {
+        if (!discountRate || !slotQuantity || !validUntil) {
+            setError("Please fill in all discount fields")
+            return
+        }
+
+        if (isNaN(Number(discountRate)) || isNaN(Number(slotQuantity))) {
+            setError("Please enter valid numbers")
+            return
+        }
+
+        setError(null)
+        setDiscountLoading(true)
+        try {
+            await createDiscount({
+                discountRate: Number(discountRate),
+                slotQuantity: Number(slotQuantity),
+                validUntil: new Date(validUntil)
+            })
+            setDiscountRate("")
+            setSlotQuantity("")
+            setValidUntil("")
+        } catch (err: any) {
+            setError(err.response?.data?.error || "Failed to create discount")
+        } finally {
+            setDiscountLoading(false)
+        }
+    }
+
     if (loading) return <div className="p-6">Loading...</div>
 
     const lastUpdated = balanceData?.updatedAt
@@ -116,8 +154,7 @@ export default function AdminDashboard() {
                 </Button>
             </div>
             {error && <div className="p-4 bg-red-50 text-red-500 rounded-lg">{error}</div>}
-            <div className="flex justify-center">
-
+            <div className="flex justify-center gap-6">
                 <div className="bg-white rounded-lg shadow p-6 max-w-md">
                     <h2 className="text-lg font-semibold text-gray-900 mb-2">Total Balance</h2>
                     <p className="text-4xl font-bold text-blue-600">Rp.{balanceData?.balance?.toLocaleString()}</p>
@@ -149,6 +186,63 @@ export default function AdminDashboard() {
                                 {operationLoading ? "Processing..." : "Subtract"}
                             </Button>
                         </div>
+                    </div>
+                </div>
+
+                <div className="bg-white rounded-lg shadow p-6 max-w-md">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Create Discount</h2>
+
+                    <div className="flex flex-col gap-4">
+                        <div>
+                            <Label className="text-sm font-medium text-gray-700">Discount Rate (%)</Label>
+                            <Input
+                                type="number"
+                                placeholder="e.g. 15"
+                                value={discountRate}
+                                onChange={(e) => setDiscountRate(e.target.value)}
+                                disabled={discountLoading}
+                                className="h-10 mt-1"
+                                min="0"
+                                max="100"
+                            />
+                        </div>
+
+                        <div>
+                            <Label className="text-sm font-medium text-gray-700">Slot Quantity</Label>
+                            <Input
+                                type="number"
+                                placeholder="e.g. 50"
+                                value={slotQuantity}
+                                onChange={(e) => setSlotQuantity(e.target.value)}
+                                disabled={discountLoading}
+                                className="h-10 mt-1"
+                                min="1"
+                            />
+                        </div>
+
+                        <div>
+                            <Label className="text-sm font-medium text-gray-700">Valid Until</Label>
+                            <Input
+                                type="datetime-local"
+                                value={validUntil}
+                                onChange={(e) => setValidUntil(e.target.value)}
+                                disabled={discountLoading}
+                                className="h-10 mt-1"
+                            />
+                            <div className="flex gap-2">
+                                <Button onClick={() => setValidUntil(formatDateLocal(10))} className="flex-1 text-xs bg-gray-500 hover:bg-gray-600 text-white">+10m</Button>
+                                <Button onClick={() => setValidUntil(formatDateLocal(15))} className="flex-1 text-xs bg-gray-500 hover:bg-gray-600 text-white">+15m</Button>
+                                <Button onClick={() => setValidUntil(formatDateLocal(20))} className="flex-1 text-xs bg-gray-500 hover:bg-gray-600 text-white">+20m</Button>
+                            </div>
+                        </div>
+
+                        <Button
+                            onClick={handleCreateDiscount}
+                            disabled={discountLoading}
+                            className="bg-purple-600 hover:bg-purple-700 text-white"
+                        >
+                            {discountLoading ? "Creating..." : "Create Discount"}
+                        </Button>
                     </div>
                 </div>
             </div>

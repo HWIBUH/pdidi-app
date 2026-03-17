@@ -4,20 +4,21 @@ const Order = models.Order;
 const User = models.User;
 const Menu = models.Menu;
 const { authenticate, isAdmin } = require('../middlewares/middleware');
+const { Op, Sequelize } = require('sequelize');
 
 const router = express.Router();
 
 router.post('/', async (req, res) => {
   try {
     const { user_id, menu_id, total_price } = req.body;
-    
-    if (!user_id || !menu_id || !total_price ) {
+
+    if (!user_id || !menu_id || !total_price) {
       return res.status(400).json({ error: 'user_id and menu_id and total_price required' });
     }
-    
+
     const user = await User.findByPk(user_id);
     const menu = await Menu.findByPk(menu_id);
-    
+
     if (!user || !menu) {
       return res.status(404).json({ error: 'User or menu not found' });
     }
@@ -25,14 +26,32 @@ router.post('/', async (req, res) => {
     if (!menu.available) {
       return res.status(400).json({ error: 'Menu item is currently unavailable' });
     }
-    
+
+    let finalPrice = total_price
+
+    const discount = await models.Discount.findOne({
+      where: {
+        [Op.and]: [
+          { validUntil: { [Op.gte]: new Date() } },
+          Sequelize.where(Sequelize.col('slotsUsed'), Op.lt, Sequelize.col('slotQuantity'))
+        ]
+      },
+      order: [['createdAt', 'DESC']]
+    });
+
+    if (discount) {
+      finalPrice = total_price * (1 - discount.discountRate / 100);
+      discount.slotsUsed += 1;
+      await discount.save();
+    }
+
     const order = await Order.create({
       user_id,
       menu_id,
       done: false,
-      total_price
+      total_price: finalPrice,
     });
-    
+
     res.status(201).json(order);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -62,11 +81,11 @@ router.get('/user/:user_id', async (req, res) => {
         { model: Menu, as: 'menu' }
       ]
     });
-    
+
     if (orders.length === 0) {
       return res.status(404).json({ error: 'No orders found for this user' });
     }
-    
+
     res.json(orders);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -81,7 +100,7 @@ router.get('/:id', async (req, res) => {
         { model: Menu, as: 'menu' }
       ]
     });
-    
+
     if (!order) {
       return res.status(404).json({ error: 'Order not found' });
     }
@@ -97,7 +116,7 @@ router.put('/:id', authenticate, isAdmin, async (req, res) => {
     if (!order) {
       return res.status(404).json({ error: 'Order not found' });
     }
-    
+
     await order.update(req.body);
     res.json(order);
   } catch (error) {
@@ -111,7 +130,7 @@ router.patch('/:id/toggle', authenticate, isAdmin, async (req, res) => {
     if (!order) {
       return res.status(404).json({ error: 'Order not found' });
     }
-    
+
     order.done = !order.done;
     await order.save();
     res.json(order);
@@ -126,7 +145,7 @@ router.delete('/:id', authenticate, isAdmin, async (req, res) => {
     if (!order) {
       return res.status(404).json({ error: 'Order not found' });
     }
-    
+
     await order.destroy();
     res.json({ message: 'Order deleted' });
   } catch (error) {
@@ -151,10 +170,13 @@ module.exports = router;
  *             required:
  *               - user_id
  *               - menu_id
+ *               - total_price
  *             properties:
  *               user_id:
  *                 type: integer
  *               menu_id:
+ *                 type: integer
+ *               total_price:
  *                 type: integer
  *     responses:
  *       201:

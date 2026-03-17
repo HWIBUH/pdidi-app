@@ -9,7 +9,10 @@ import { createOrder } from "@/service/order.service";
 import { type Menu } from "@/model/menu.model";
 import { useNavigate } from "react-router";
 import { useUser } from "@/context/user-storage";
+import { getActiveDiscount } from "@/service/discount.service";
+import { type DiscountResponse } from "@/dtos/discount.dto";
 import OrderConfirmationModal from "@/components/OrderConfirmationModal";
+import { getTimeRemaining } from "@/utils/format-date";
 
 type SortOption = {
     label: string
@@ -28,15 +31,36 @@ export default function MenuPage() {
     const [showConfirmationModal, setShowConfirmationModal] = useState(false)
     const [selectedMenu, setSelectedMenu] = useState<Menu | null>(null)
     const [orderLoading, setOrderLoading] = useState(false)
+    const [activeDiscount, setActiveDiscount] = useState<DiscountResponse | null>(null)
+    const [timeRemaining, setTimeRemaining] = useState<string>("")
     const navigate = useNavigate()
     const { user } = useUser()
 
     useEffect(() => {
+        getActiveDiscount()
+            .then(setActiveDiscount)
+            .catch(err => console.error("Failed to load discount:", err))
+
         getAllMenus()
             .then(setMenus)
             .catch(err => setError(err.message))
             .finally(() => setLoading(false))
     }, [])
+
+    useEffect(() => {
+        if (activeDiscount) {
+            setTimeRemaining(getTimeRemaining(activeDiscount.validUntil))
+        }
+
+        const interval = setInterval(() => {
+            if (activeDiscount) {
+                setTimeRemaining(getTimeRemaining(activeDiscount.validUntil))
+            }
+        }, 1000)
+
+        return () => clearInterval(interval) 
+    }, [activeDiscount])
+
 
     const handleOrderClick = (menu: Menu) => {
         setSelectedMenu(menu)
@@ -116,6 +140,36 @@ export default function MenuPage() {
                     My Orders <ChevronRight className="w-4 h-4" />
                 </Button>
             </div>
+
+            {activeDiscount && (
+                <div className="col-span-8 bg-linear-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-6 mt-6 mb-6 shadow-sm">
+                    <div className="flex items-center justify-between gap-6">
+                        <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                                <h3 className="font-bold text-amber-900 text-xl">Discount!</h3>
+                            </div>
+                            <p className="text-amber-800 text-sm mb-2">enjoy <span className="font-bold text-lg">{activeDiscount.discountRate}%</span> discount on all items until {timeRemaining}</p>
+                            <div className="flex items-center gap-4 text-sm">
+                                <span className="text-amber-700">
+                                    <span className="font-bold text-amber-900">{activeDiscount.slotQuantity - activeDiscount.slotsUsed}</span> slots left
+                                </span>
+                                <div className="w-32 h-1 bg-amber-200 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-linear-to-r from-amber-500 to-orange-500"
+                                        style={{
+                                            width: `${((activeDiscount.slotQuantity - activeDiscount.slotsUsed) / activeDiscount.slotQuantity) * 100}%`
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-4xl font-bold text-amber-600">{activeDiscount.discountRate}%</p>
+                            <p className="text-xs font-semibold text-amber-700 mt-1">OFF</p>
+                        </div>
+                    </div>
+                </div>
+            )}
             <div className="w-full h-full flex justify-center pt-8 mx-auto">
                 <div className="w-8/10 max-w-7xl grid grid-cols-8 grid-rows-8 gap-6 px-4">
                     <div className="row-span-1 col-span-8 flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -260,6 +314,7 @@ export default function MenuPage() {
                     setSelectedMenu(null)
                 }}
                 isLoading={orderLoading}
+                activeDiscount={activeDiscount}
             />
         </div>
     )
