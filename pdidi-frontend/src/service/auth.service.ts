@@ -1,5 +1,5 @@
 import { api } from '@/lib/axios'
-import { useUser } from '@/context/user-context'
+import { useUser } from '@/context/user-storage'
 import type { LoginRequest, LoginResponse } from '@/dtos/login.dto'
 import type { RegisterRequest, RegisterResponse } from '@/dtos/register.dto'
 import { redirect } from 'react-router'

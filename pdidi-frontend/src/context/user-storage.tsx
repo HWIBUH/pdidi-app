@@ -1,14 +1,14 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { createJSONStorage, persist } from 'zustand/middleware'
 import type { User } from '@/model/user.model'
 
-interface UserContext {
+interface UserStorage {
   user: User | null
   setUser: (user: User | null) => void
   logout: () => void
 }
 
-export const useUser = create<UserContext>()(
+export const useUser = create<UserStorage>()(
   persist(
     (set) => ({
       user: null,
@@ -17,6 +17,7 @@ export const useUser = create<UserContext>()(
     }),
     {
       name: 'user-storage',
+      storage: createJSONStorage(() => sessionStorage),
     }
   )
 )

@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom'
 import Header from '@/components/ui/header'
 import Footer from '@/components/ui/footer'
-import { useUser } from '@/context/user-context'
+import { useUser } from '@/context/user-storage'
 
 export default function Layout() {
   const { user } = useUser()

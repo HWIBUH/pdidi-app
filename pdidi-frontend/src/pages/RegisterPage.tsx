@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useUser } from "@/context/user-context";
+import { useUser } from "@/context/user-storage";
 import { register } from "@/service/auth.service";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";

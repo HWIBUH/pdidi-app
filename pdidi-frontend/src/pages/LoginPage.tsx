@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "@/service/auth.service";
-import { useUser } from "@/context/user-context";
+import { useUser } from "@/context/user-storage";
 import AdminPasswordModal from "@/components/AdminPasswordModal";
 import { type LoginResponse } from "@/dtos/login.dto";
 

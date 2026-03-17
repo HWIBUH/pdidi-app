@@ -8,7 +8,7 @@ import { getAllMenus } from "@/service/menu.service";
 import { createOrder } from "@/service/order.service";
 import { type Menu } from "@/model/menu.model";
 import { useNavigate } from "react-router";
-import { useUser } from "@/context/user-context";
+import { useUser } from "@/context/user-storage";
 import OrderConfirmationModal from "@/components/OrderConfirmationModal";
 
 type SortOption = {

@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom'
-import { useUser } from '@/context/user-context'
+import { useUser } from '@/context/user-storage'
 import type { ReactNode } from 'react'
 
 export function AdminRoute({ children }: { children: ReactNode }) {
