@@ -5,7 +5,7 @@ import path from "path"
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: 'https://dregis.site/', // command this if for local
+  base: 'https://dregis.site/catering/', // command this if for local
   server: {
     watch: {
       usePolling: true,
