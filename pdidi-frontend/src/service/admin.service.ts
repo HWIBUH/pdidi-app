@@ -41,6 +41,15 @@ export async function toggleOrder(order_id: number){
     }
 }
 
+export async function deleteOrder(order_id: number){
+    try{
+        const res = await api.delete(`/order/${order_id}`)
+        return res.data
+    }catch(error) {
+        throw error
+    }
+}
+
 export async function mapIngredientToMenu(ingredient: Ingredient, menu: Menu) {
     try {
         const res = await api.post('/menu-ingredients', { menu_id: menu.id, ingredients_id: ingredient.id })

@@ -6,6 +6,7 @@ export interface OrderResponse {
     user_id: number,
     menu_id: number,
     done: boolean,
+    total_price: number,
     createdAt: Date,
     updatedAt: Date,
     user?: User,
@@ -14,5 +15,6 @@ export interface OrderResponse {
 
 export interface OrderRequest {
     user_id: number,
-    menu_id: number
+    menu_id: number,
+    total_price: number
 }

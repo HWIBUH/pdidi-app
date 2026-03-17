@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getBalance, addBalance, subtractBalance, getOrders, toggleOrder } from "@/service/admin.service";
+import { getBalance, addBalance, subtractBalance, getOrders, toggleOrder, deleteOrder } from "@/service/admin.service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { BalanceResponse } from "@/dtos/balance.dto";
@@ -15,6 +15,7 @@ export default function AdminDashboard() {
     const [amount, setAmount] = useState("")
     const [operationLoading, setOperationLoading] = useState(false)
     const [toggleLoading, setToggleLoading] = useState<number | null>(null)
+    const [deleteLoading, setDeleteLoading] = useState<number | null>(null)
     const navigate = useNavigate()
 
     const fetchData = () => {
@@ -43,6 +44,21 @@ export default function AdminDashboard() {
             setError(err.response?.data?.error || "Failed to toggle order")
         } finally {
             setToggleLoading(null)
+        }
+    }
+
+    const handleDeleteOrder = async (orderId: number) => {
+        if (!window.confirm("Are you sure you want to delete this order?")) {
+            return
+        }
+        setDeleteLoading(orderId)
+        try {
+            await deleteOrder(orderId)
+            fetchData()
+        } catch (err: any) {
+            setError(err.response?.data?.error || "Failed to delete order")
+        } finally {
+            setDeleteLoading(null)
         }
     }
 
@@ -148,7 +164,7 @@ export default function AdminDashboard() {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">ID</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">User</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Menu</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Menu Price</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Total Price</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Status</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Date</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Action</th>
@@ -161,11 +177,11 @@ export default function AdminDashboard() {
                                         <td className="px-6 py-4 text-sm text-gray-900">{order.id}</td>
                                         <td className="px-6 py-4 text-sm text-gray-900">{order.user?.username}</td>
                                         <td className="px-6 py-4 text-sm text-gray-900">{order.menu?.name}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-900">Rp. {order.menu?.price.toLocaleString()}</td>
+                                        <td className="px-6 py-4 text-sm text-gray-900">Rp. {order.total_price.toLocaleString()}</td>
                                         <td className="px-6 py-4 text-sm">
                                             <span className={`px-3 py-1 rounded-full text-xs font-medium ${order.done
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : 'bg-red-300 text-red-800'
+                                                ? 'bg-green-100 text-green-800'
+                                                : 'bg-red-300 text-red-800'
                                                 }`}>
                                                 {order.done ? 'Done' : 'Not Done'}
                                             </span>
@@ -178,11 +194,18 @@ export default function AdminDashboard() {
                                                 onClick={() => handleToggleOrder(order.id)}
                                                 disabled={toggleLoading === order.id}
                                                 className={`px-3 py-1 text-xs rounded font-medium ${order.done
-                                                        ? 'bg-gray-600 hover:bg-gray-700 text-white'
-                                                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                                                    ? 'bg-gray-600 hover:bg-gray-700 text-white'
+                                                    : 'bg-blue-600 hover:bg-blue-700 text-white'
                                                     }`}
                                             >
                                                 {toggleLoading === order.id ? 'Updating...' : order.done ? 'Mark Not Done' : 'Mark Done'}
+                                            </Button>
+                                            <Button
+                                                onClick={() => handleDeleteOrder(order.id)}
+                                                disabled={deleteLoading === order.id}
+                                                className={`px-3 py-1 text-xs rounded font-medium bg-red-600 hover:bg-red-700 text-white`}
+                                            >
+                                                {deleteLoading === order.id ? 'Deleting...' : 'Delete Order'}
                                             </Button>
                                         </td>
                                     </tr>

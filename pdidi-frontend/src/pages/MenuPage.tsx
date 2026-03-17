@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button";
 import { ChevronRight, ChevronsDown, ChevronsUp, Search, Utensils } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getAllMenus } from "@/service/menu.service";
+import { createOrder } from "@/service/order.service";
 import { type Menu } from "@/model/menu.model";
 import { useNavigate } from "react-router";
+import { useUser } from "@/context/user-context";
+import OrderConfirmationModal from "@/components/OrderConfirmationModal";
 
 type SortOption = {
     label: string
@@ -22,7 +25,11 @@ export default function MenuPage() {
     const [sort, setSort] = useState(1)
     const [priceFilter, setPriceFilter] = useState(maxPrice)
     const [searchQuery, setSearchQuery] = useState("")
+    const [showConfirmationModal, setShowConfirmationModal] = useState(false)
+    const [selectedMenu, setSelectedMenu] = useState<Menu | null>(null)
+    const [orderLoading, setOrderLoading] = useState(false)
     const navigate = useNavigate()
+    const { user } = useUser()
 
     useEffect(() => {
         getAllMenus()
@@ -30,6 +37,36 @@ export default function MenuPage() {
             .catch(err => setError(err.message))
             .finally(() => setLoading(false))
     }, [])
+
+    const handleOrderClick = (menu: Menu) => {
+        setSelectedMenu(menu)
+        setShowConfirmationModal(true)
+    }
+
+    const handleCreateOrder = async () => {
+        if (!selectedMenu || !user?.id) return
+        console.log("Creating order with:", {
+            user_id: user.id,
+            menu_id: selectedMenu.id,
+            total_price: selectedMenu.price
+        })
+
+        setOrderLoading(true)
+        try {
+            await createOrder({
+                user_id: user.id,
+                menu_id: selectedMenu.id,
+                total_price: selectedMenu.price
+            })
+            setShowConfirmationModal(false)
+            setSelectedMenu(null)
+            navigate("/orders")
+        } catch (err: any) {
+            setError(err.response?.data?.error || "Failed to create order")
+        } finally {
+            setOrderLoading(false)
+        }
+    }
 
     const sortOptions: SortOption[] = [
         { label: "Price", value: 1 },
@@ -141,8 +178,12 @@ export default function MenuPage() {
                                     filteredMenus.map(item => (
                                         <div key={item.id} className={`border rounded-lg overflow-hidden flex flex-col gap-0 hover:shadow-lg transition-shadow bg-white ${!item.available ? 'opacity-60 border-gray-300' : 'border-gray-200 hover:shadow-lg'
                                             }`}>
-                                            <div className="w-full h-40 bg-linear-to-br from-gray-100 to-gray-50 rounded-t-lg flex items-center justify-center text-6xl overflow-hidden">
-                                                {item.image || <Utensils/>}
+                                            <div className="w-full h-40 bg-linear-to-br from-gray-100 to-gray-50 rounded-t-lg flex items-center justify-center overflow-hidden">
+                                                {item.image ? (
+                                                    <img src={item.image} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <Utensils className="text-6xl text-gray-400" />
+                                                )}
                                             </div>
 
                                             <div className="flex flex-col flex-1 p-4 gap-3">
@@ -168,9 +209,10 @@ export default function MenuPage() {
                                                         ? 'bg-blue-600 hover:bg-blue-700 text-white'
                                                         : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                                         }`}
+                                                    onClick={() => handleOrderClick(item)}
                                                     disabled={!item.available}
                                                 >
-                                                    {item.available ? "Add to Cart" : "Unavailable"}
+                                                    {item.available ? "Order" : "Unavailable"}
                                                 </Button>
                                             </div>
                                         </div>
@@ -208,6 +250,17 @@ export default function MenuPage() {
 
                 </div>
             </div>
+
+            <OrderConfirmationModal
+                isOpen={showConfirmationModal}
+                selectedMenu={selectedMenu}
+                onConfirm={handleCreateOrder}
+                onCancel={() => {
+                    setShowConfirmationModal(false)
+                    setSelectedMenu(null)
+                }}
+                isLoading={orderLoading}
+            />
         </div>
     )
 }

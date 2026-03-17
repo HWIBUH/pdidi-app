@@ -9,8 +9,10 @@ import type { Ingredient } from '@/model/ingredient.model'
 import { createIngredient, deleteIngredient, getAllIngredients, toggleIngredientAvailability } from '@/service/ingredients.service'
 import MenuForIngredientModal from '@/components/MenuForIngredientModal'
 import IngredientsForMenuModal from '@/components/IngredientForMenuModal'
-import { ChevronLeft } from 'lucide-react'
 import { useNavigate } from 'react-router'
+import { ChevronLeft, Utensils } from 'lucide-react'
+import { updateMenu } from '@/service/menu.service'
+import { compressImage } from '@/utils/compress-image'
 
 export default function AdminManage() {
     const [menus, setMenus] = useState<Menu[]>([])
@@ -30,6 +32,7 @@ export default function AdminManage() {
 
     const [isMenusModalOpen, setIsMenusModalOpen] = useState(false)
     const [isIngredientsModalOpen, setIsIngredientsModalOpen] = useState(false)
+    const [uploadingMenuId, setUploadingMenuId] = useState<number | null>(null)
     const navigate = useNavigate()
 
     const fetchData = async () => {
@@ -81,6 +84,19 @@ export default function AdminManage() {
             fetchData()
         } catch (err: any) {
             setError(err.response?.data?.error || 'Failed to delete menu')
+        }
+    }
+
+    const handleImageUpload = async (menuId: number, file: File) => {
+        setUploadingMenuId(menuId)
+        try {
+            const compressedBase64 = await compressImage(file)
+            await updateMenu(menuId, { image: compressedBase64 })
+            fetchData()
+        } catch (err: any) {
+            setError(err.response?.data?.error || "Failed to upload image")
+        } finally {
+            setUploadingMenuId(null)
         }
     }
 
@@ -228,6 +244,7 @@ export default function AdminManage() {
                             <table className="w-full">
                                 <thead className="bg-gray-50 border-b">
                                     <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Image</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Name</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Price</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Description</th>
@@ -238,6 +255,13 @@ export default function AdminManage() {
                                 <tbody>
                                     {menus.map(menu => (
                                         <tr key={menu.id} className="border-b hover:bg-gray-50">
+                                            <td className="px-6 py-4 text-sm text-gray-900">
+                                                {menu.image ? (
+                                                    <img src={menu.image} alt={menu.name} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <Utensils className="text-6xl text-gray-400" />
+                                                )}
+                                            </td>
                                             <td className="px-6 py-4 text-sm text-gray-900">{menu.name}</td>
                                             <td className="px-6 py-4 text-sm text-gray-900">Rp.{menu.price.toLocaleString()}</td>
                                             <td className="px-6 py-4 text-sm text-gray-500">{menu.description}</td>
@@ -250,21 +274,35 @@ export default function AdminManage() {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-sm">
-                                                <Button
-                                                    onClick={() => {
-                                                        setSelectedMenu(menu)
-                                                        setIsIngredientsModalOpen(true)
-                                                    }}
-                                                    className="bg-green-600 hover:bg-green-700 text-white text-xs"
-                                                >
-                                                    Show Ingredients
-                                                </Button>
-                                                <Button
-                                                    onClick={() => handleDeleteMenu(menu.id)}
-                                                    className="bg-red-600 hover:bg-red-700 text-white text-xs"
-                                                >
-                                                    Delete
-                                                </Button>
+                                                <div className="flex flex-col gap-2">
+                                                    <Button
+                                                        onClick={() => {
+                                                            setSelectedMenu(menu)
+                                                            setIsIngredientsModalOpen(true)
+                                                        }}
+                                                        className="bg-green-600 hover:bg-green-700 text-white text-xs"
+                                                    >
+                                                        Show Ingredients
+                                                    </Button>
+                                                    <Input
+                                                        id={`upload-${menu.id}`}
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={(e) => {
+                                                            if (e.target.files?.[0]) {
+                                                                handleImageUpload(menu.id, e.target.files[0])
+                                                            }
+                                                        }}
+                                                        disabled={uploadingMenuId === menu.id}
+                                                        className="cursor-pointer"
+                                                    />
+                                                    <Button
+                                                        onClick={() => handleDeleteMenu(menu.id)}
+                                                        className="bg-red-600 hover:bg-red-700 text-white text-xs"
+                                                    >
+                                                        Delete
+                                                    </Button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}

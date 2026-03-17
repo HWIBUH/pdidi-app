@@ -9,10 +9,10 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
   try {
-    const { user_id, menu_id } = req.body;
+    const { user_id, menu_id, total_price } = req.body;
     
-    if (!user_id || !menu_id) {
-      return res.status(400).json({ error: 'user_id and menu_id required' });
+    if (!user_id || !menu_id || !total_price ) {
+      return res.status(400).json({ error: 'user_id and menu_id and total_price required' });
     }
     
     const user = await User.findByPk(user_id);
@@ -29,7 +29,8 @@ router.post('/', async (req, res) => {
     const order = await Order.create({
       user_id,
       menu_id,
-      done: false
+      done: false,
+      total_price
     });
     
     res.status(201).json(order);

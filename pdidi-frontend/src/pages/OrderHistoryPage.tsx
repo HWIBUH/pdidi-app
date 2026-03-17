@@ -45,9 +45,8 @@ export default function OrderHistoryPage() {
                     <table className="w-full">
                         <thead className="bg-gray-50 border-b border-gray-200">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Order ID</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Menu</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Price</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Total Price</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Status</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Date</th>
                             </tr>
@@ -56,15 +55,14 @@ export default function OrderHistoryPage() {
                             {orders.length > 0 ? (
                                 orders.map(order => (
                                     <tr key={order.id} className="border-b border-gray-200 hover:bg-gray-50">
-                                        <td className="px-6 py-4 text-sm text-gray-900">{order.id}</td>
                                         <td className="px-6 py-4 text-sm text-gray-900">{order.menu?.name}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-900">Rp. {order.menu?.price.toLocaleString()}</td>
+                                        <td className="px-6 py-4 text-sm text-gray-900">Rp. {order.total_price.toLocaleString()}</td>
                                         <td className="px-6 py-4 text-sm">
                                             <span className={`px-3 py-1 rounded-full text-xs font-medium ${order.done
                                                 ? 'bg-green-100 text-green-800'
-                                                : 'bg-yellow-100 text-yellow-800'
+                                                : 'bg-red-100 text-red-800'
                                                 }`}>
-                                                {order.done ? 'Completed' : 'Pending'}
+                                                {order.done ? 'Completed' : 'Not Completed'}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-500">

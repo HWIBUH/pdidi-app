@@ -3,7 +3,7 @@ import { api } from "@/lib/axios";
 
 export async function createOrder(req: OrderRequest): Promise<OrderResponse> {
     try {
-        const res = await api.post('/order', { req })
+        const res = await api.post('/order', req)
         return res.data
     }catch(error) {
         throw error
@@ -18,3 +18,4 @@ export async function getOrdersByUserId(user_id: number): Promise<OrderResponse[
         throw error
     }
 }
+
