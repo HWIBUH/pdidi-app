@@ -10,6 +10,8 @@ import { AdminRoute } from '@/components/AdminRoute'
 import AdminManage from '@/pages/AdminManage'
 import OrderHistoryPage from '@/pages/OrderHistoryPage'
 
+const basename = import.meta.env.PROD ? '/catering/' : '/'
+
 export const route = createBrowserRouter([
     {
         element: <Layout />,
@@ -44,4 +46,6 @@ export const route = createBrowserRouter([
             }
         ]
     }
-])
+], {
+    basename: basename
+})
