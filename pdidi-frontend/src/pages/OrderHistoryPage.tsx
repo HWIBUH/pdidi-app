@@ -45,10 +45,10 @@ export default function OrderHistoryPage() {
                     <table className="w-full">
                         <thead className="bg-gray-50 border-b border-gray-200">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Menu</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Total Price</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Status</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Date</th>
+                                <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">Menu</th>
+                                <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">Total Price</th>
+                                <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">Status</th>
+                                <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">Date</th>
                             </tr>
                         </thead>
                         <tbody>

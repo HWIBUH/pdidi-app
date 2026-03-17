@@ -2,7 +2,7 @@ import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, ChevronsDown, ChevronsUp, Search, Utensils } from "lucide-react";
+import { ChevronRight, ChevronsDown, ChevronsUp, Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getAllMenus } from "@/service/menu.service";
 import { createOrder } from "@/service/order.service";
@@ -13,6 +13,7 @@ import { getActiveDiscount } from "@/service/discount.service";
 import { type DiscountResponse } from "@/dtos/discount.dto";
 import OrderConfirmationModal from "@/components/OrderConfirmationModal";
 import { getTimeRemaining } from "@/utils/format-date";
+import MenuCard from "@/components/MenuCard";
 
 type SortOption = {
     label: string
@@ -130,7 +131,7 @@ export default function MenuPage() {
     }
 
     return (
-        <div className="p-6">
+        <div className="h-9/10 p-6">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
                 <Button
@@ -230,46 +231,7 @@ export default function MenuPage() {
                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
                                 {filteredMenus.length > 0 ? (
                                     filteredMenus.map(item => (
-                                        <div key={item.id} className={`border rounded-lg overflow-hidden flex flex-col gap-0 hover:shadow-lg transition-shadow bg-white ${!item.available ? 'opacity-60 border-gray-300' : 'border-gray-200 hover:shadow-lg'
-                                            }`}>
-                                            <div className="w-full h-40 bg-linear-to-br from-gray-100 to-gray-50 rounded-t-lg flex items-center justify-center overflow-hidden">
-                                                {item.image ? (
-                                                    <img src={item.image} className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <Utensils className="text-6xl text-gray-400" />
-                                                )}
-                                            </div>
-
-                                            <div className="flex flex-col flex-1 p-4 gap-3">
-                                                <div>
-                                                    <h3 className="font-bold text-gray-900 text-lg line-clamp-2">{item.name}</h3>
-                                                    {item.description && (
-                                                        <p className="text-xs text-gray-500 line-clamp-2 mt-1">{item.description}</p>
-                                                    )}
-                                                </div>
-
-                                                <div className="flex justify-between items-center mt-auto">
-                                                    <span className="text-lg font-bold text-blue-600">Rp {item.price.toLocaleString()}</span>
-                                                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${item.available
-                                                        ? 'bg-green-100 text-green-700'
-                                                        : 'bg-red-100 text-red-700'
-                                                        }`}>
-                                                        {item.available ? 'Available' : 'Out'}
-                                                    </span>
-                                                </div>
-
-                                                <Button
-                                                    className={`w-full h-9 rounded-md font-medium transition-all text-sm ${item.available
-                                                        ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                                                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                                        }`}
-                                                    onClick={() => handleOrderClick(item)}
-                                                    disabled={!item.available}
-                                                >
-                                                    {item.available ? "Order" : "Unavailable"}
-                                                </Button>
-                                            </div>
-                                        </div>
+                                        <MenuCard key={item.id} item={item} handleClick={handleOrderClick}/>
                                     ))
                                 ) : (
                                     <p className="col-span-full text-center text-gray-500">No menus found</p>
