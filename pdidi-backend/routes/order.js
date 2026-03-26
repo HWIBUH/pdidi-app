@@ -10,10 +10,10 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
   try {
-    const { user_id, menu_id, total_price } = req.body;
+    const { user_id, menu_id } = req.body;
 
-    if (!user_id || !menu_id || !total_price) {
-      return res.status(400).json({ error: 'user_id and menu_id and total_price required' });
+    if (!user_id || !menu_id ) {
+      return res.status(400).json({ error: 'user_id and menu_id required' });
     }
 
     const user = await User.findByPk(user_id);
@@ -27,7 +27,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Menu item is currently unavailable' });
     }
 
-    let finalPrice = total_price
+    let finalPrice = menu.price
 
     const discount = await models.Discount.findOne({
       where: {
@@ -170,13 +170,10 @@ module.exports = router;
  *             required:
  *               - user_id
  *               - menu_id
- *               - total_price
  *             properties:
  *               user_id:
  *                 type: integer
  *               menu_id:
- *                 type: integer
- *               total_price:
  *                 type: integer
  *     responses:
  *       201:

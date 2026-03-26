@@ -70,18 +70,12 @@ export default function MenuPage() {
 
     const handleCreateOrder = async () => {
         if (!selectedMenu || !user?.id) return
-        console.log("Creating order with:", {
-            user_id: user.id,
-            menu_id: selectedMenu.id,
-            total_price: selectedMenu.price
-        })
 
         setOrderLoading(true)
         try {
             await createOrder({
                 user_id: user.id,
                 menu_id: selectedMenu.id,
-                total_price: selectedMenu.price
             })
             setShowConfirmationModal(false)
             setSelectedMenu(null)

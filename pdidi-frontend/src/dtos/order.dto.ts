@@ -16,5 +16,4 @@ export interface OrderResponse {
 export interface OrderRequest {
     user_id: number,
     menu_id: number,
-    total_price: number
 }
