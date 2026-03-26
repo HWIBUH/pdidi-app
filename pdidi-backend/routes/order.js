@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
     });
 
     if (discount) {
-      finalPrice = total_price * (1 - discount.discountRate / 100);
+      finalPrice = menu.price * (1 - discount.discountRate / 100);
       discount.slotsUsed += 1;
       await discount.save();
     }
