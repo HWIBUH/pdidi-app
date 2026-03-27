@@ -1,4 +1,3 @@
-import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -14,11 +13,7 @@ import { type DiscountResponse } from "@/dtos/discount.dto";
 import OrderConfirmationModal from "@/components/OrderConfirmationModal";
 import { getTimeRemaining } from "@/utils/format-date";
 import MenuCard from "@/components/MenuCard";
-
-type SortOption = {
-    label: string
-    value: number
-}
+import SortCombobox from "@/components/SortCombobox";
 
 export default function MenuPage() {
     const maxPrice = 50000
@@ -59,7 +54,7 @@ export default function MenuPage() {
             }
         }, 1000)
 
-        return () => clearInterval(interval) 
+        return () => clearInterval(interval)
     }, [activeDiscount])
 
 
@@ -86,11 +81,6 @@ export default function MenuPage() {
             setOrderLoading(false)
         }
     }
-
-    const sortOptions: SortOption[] = [
-        { label: "Price", value: 1 },
-        { label: "Name", value: 2 }
-    ]
 
     const filteredMenus = menus
         .filter(menu => {
@@ -125,8 +115,8 @@ export default function MenuPage() {
     }
 
     return (
-        <div className="h-9/10 p-6">
-            <div className="flex justify-between items-center">
+        <div className="h-9/10 p-2">
+            <div className="flex justify-between items-center p-4">
                 <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
                 <Button
                     onClick={() => navigate("/orders")}
@@ -192,48 +182,15 @@ export default function MenuPage() {
                             </Button>
 
                             <div className="w-48">
-                                <Combobox
-                                    items={sortOptions}
-                                    itemToStringValue={(sortOption: SortOption) => sortOption.label}
-                                    onValueChange={(e) => setSort(e?.value || 1)}
-                                >
-                                    <ComboboxInput
-                                        placeholder="Sort by..."
-                                        className="h-10 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
-                                    />
-                                    <ComboboxContent>
-                                        <ComboboxEmpty>No options found.</ComboboxEmpty>
-                                        <ComboboxList>
-                                            {(item: SortOption) => (
-                                                <ComboboxItem
-                                                    key={item.value}
-                                                    value={item.value}
-                                                >
-                                                    {item.label}
-                                                </ComboboxItem>
-                                            )}
-                                        </ComboboxList>
-                                    </ComboboxContent>
-                                </Combobox>
+                                <SortCombobox onSortChange={setSort} />
                             </div>
                         </div>
                     </div>
 
-                    <div className="w-full col-span-8 row-span-7 grid grid-cols-8 gap-6">
+                    <div className="w-full col-span-8 row-span-7 grid grid-cols-1 lg:grid-cols-8 gap-6">
+                        
 
-                        <div className="col-span-6 overflow-y-scroll">
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-                                {filteredMenus.length > 0 ? (
-                                    filteredMenus.map(item => (
-                                        <MenuCard key={item.id} item={item} handleClick={handleOrderClick}/>
-                                    ))
-                                ) : (
-                                    <p className="col-span-full text-center text-gray-500">No menus found</p>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="col-span-2 p-6 rounded-lg shadow-sm border border-gray-300 flex flex-col gap-6 self-start h-fit">
+                        <div className="lg:col-span-2 p-6 rounded-lg shadow-sm border border-gray-300 flex flex-col gap-6 h-fit">
                             <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
 
                             <div className="flex flex-col gap-4">
@@ -256,8 +213,19 @@ export default function MenuPage() {
                                 </div>
                             </div>
                         </div>
-                    </div>
 
+                        <div className="lg:col-span-6 overflow-y-scroll">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+                                {filteredMenus.length > 0 ? (
+                                    filteredMenus.map(item => (
+                                        <MenuCard key={item.id} item={item} handleClick={handleOrderClick} />
+                                    ))
+                                ) : (
+                                    <p className="col-span-full text-center text-gray-500">No menus found</p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
