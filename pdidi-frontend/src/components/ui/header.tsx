@@ -15,7 +15,7 @@ export default function Header(
     return (
         <div className="w-full flex items-center justify-between py-5 px-6 border-b border-gray-200">
             <div className="flex flex-col">
-                <img src="/catevings256.png" alt="CatEVinGS" className="h-10 w-auto" />
+                <img src={`${import.meta.env.BASE_URL}catevings256.png`} alt="CatEVinGS" className="h-10 w-auto" />
             </div>
             <div className="flex items-center gap-4">
                 {user && (
