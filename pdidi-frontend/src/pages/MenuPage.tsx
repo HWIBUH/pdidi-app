@@ -157,7 +157,7 @@ export default function MenuPage() {
             )}
             <div className="w-full h-full flex justify-center pt-8 mx-auto">
                 <div className="w-8/10 max-w-7xl grid grid-cols-8 grid-rows-8 gap-6 px-4">
-                    <div className="row-span-1 col-span-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div className="row-span-1 col-span-8 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                         <div className="relative w-full max-w-md flex items-center">
                             <Search className="absolute left-3 w-4 h-4 text-gray-500" />
                             <Input
@@ -214,8 +214,8 @@ export default function MenuPage() {
                             </div>
                         </div>
 
-                        <div className="lg:col-span-6 overflow-y-scroll">
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+                        <div className="lg:col-span-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6">
                                 {filteredMenus.length > 0 ? (
                                     filteredMenus.map(item => (
                                         <MenuCard key={item.id} item={item} handleClick={handleOrderClick} />
