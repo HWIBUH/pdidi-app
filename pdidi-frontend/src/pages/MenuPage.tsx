@@ -156,8 +156,8 @@ export default function MenuPage() {
                 </div>
             )}
             <div className="w-full h-full flex justify-center pt-8 mx-auto">
-                <div className="w-8/10 max-w-7xl grid grid-cols-8 grid-rows-8 gap-6 px-4">
-                    <div className="row-span-1 col-span-8 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                <div className="w-full lg:w-8/10 max-w-7xl flex flex-col lg:grid lg:grid-cols-8 lg:gap-6 px-4">
+                    <div className="col-span-8 flex flex-col sm:flex-row justify-between items-center gap-4">
                         <div className="relative w-full max-w-md flex items-center">
                             <Search className="absolute left-3 w-4 h-4 text-gray-500" />
                             <Input
@@ -188,9 +188,7 @@ export default function MenuPage() {
                     </div>
 
                     <div className="w-full col-span-8 row-span-7 grid grid-cols-1 lg:grid-cols-8 gap-6">
-                        
-
-                        <div className="lg:col-span-2 p-6 rounded-lg shadow-sm border border-gray-300 flex flex-col gap-6 h-fit">
+                        <div className="mt-6 lg:mt-0 lg:col-span-2 p-6 rounded-lg shadow-sm border border-gray-300 flex flex-col gap-6 h-fit">
                             <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
 
                             <div className="flex flex-col gap-4">
