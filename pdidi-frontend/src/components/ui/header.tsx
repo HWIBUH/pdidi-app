@@ -15,7 +15,7 @@ export default function Header(
     return (
         <div className="w-full flex items-center justify-between py-5 px-6 border-b border-gray-200">
             <div className="flex flex-col">
-                <h1 className="text-2xl font-semibold text-gray-800">Catering Pdidi</h1>
+                <img src="/catevings256.png" alt="CatEVinGS" className="h-10 w-auto" />
             </div>
             <div className="flex items-center gap-4">
                 {user && (
