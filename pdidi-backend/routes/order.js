@@ -7,6 +7,7 @@ const { authenticate, isAdmin } = require('../middlewares/middleware');
 const { Op, Sequelize } = require('sequelize');
 
 const router = express.Router();
+const fee = 1000; // 1k fee for each order
 
 router.post('/', async (req, res) => {
   try {
@@ -27,7 +28,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Menu item is currently unavailable' });
     }
 
-    let finalPrice = menu.price
+    let menuPrice = menu.price;
 
     const discount = await models.Discount.findOne({
       where: {
@@ -40,10 +41,13 @@ router.post('/', async (req, res) => {
     });
 
     if (discount) {
-      finalPrice = menu.price * (1 - discount.discountRate / 100);
+      menuPrice = menu.price * (1 - discount.discountRate / 100);
       discount.slotsUsed += 1;
       await discount.save();
     }
+
+    // Add fee to final price
+    finalPrice = menuPrice + fee;
 
     const order = await Order.create({
       user_id,
