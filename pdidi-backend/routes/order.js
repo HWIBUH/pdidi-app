@@ -46,7 +46,6 @@ router.post('/', async (req, res) => {
       await discount.save();
     }
 
-    // Add fee to final price
     finalPrice = menuPrice + fee;
 
     const order = await Order.create({

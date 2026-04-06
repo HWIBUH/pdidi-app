@@ -2,8 +2,6 @@ const express = require('express');
 const models = require('../models');
 const { authenticate, isAdmin } = require('../middlewares/middleware');
 const Menu = models.Menu;
-const MenuIngredientsMapping = models.MenuIngredientsMapping
-const Ingredients = models.Ingredients
 
 const router = express.Router();
 
@@ -78,18 +76,6 @@ router.delete('/:id', authenticate, isAdmin, async (req, res) => {
   }
 });
 
-router.put('/update-all-prices', authenticate, isAdmin, async (req, res) => {
-  try {
-    const menuItems = await Menu.findAll();
-    for (const menuItem of menuItems) {
-      menuItem.price -= 1000;
-      await menuItem.save();
-    }
-    res.json({ message: 'All menu item prices updated' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 module.exports = router;
 
 /**

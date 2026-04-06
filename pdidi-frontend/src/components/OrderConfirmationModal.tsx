@@ -54,24 +54,27 @@ export default function OrderConfirmationModal({
                         <span>Original Price:</span>
                         <span>Rp {originalPrice.toLocaleString()}</span>
                     </div>
+
                     {activeDiscount && (
-                        <>
-                            <div className="flex justify-between text-green-600 font-medium">
-                                <span>Discount ({activeDiscount.discountRate}%):</span>
-                                <span>-Rp {discountAmount.toLocaleString()}</span>
-                            </div>
-                            <div className="flex justify-between text-gray-700">
-                                <span>Service Fee:</span>
-                                <span>Rp {fee.toLocaleString()}</span>
-                            </div>
-                            <div className="border-t pt-3 flex justify-between text-lg font-bold text-gray-900">
-                                <span>Total:</span>
-                                <span>Rp {finalPrice.toLocaleString()}</span>
-                            </div>
-                            <p className="text-xs text-gray-500 text-center mt-2">
-                                You save Rp {discountAmount.toLocaleString()}!
-                            </p>
-                        </>
+                        <div className="flex justify-between text-green-600 font-medium">
+                            <span>Discount ({activeDiscount.discountRate}%):</span>
+                            <span>-Rp {discountAmount.toLocaleString()}</span>
+                        </div>
+                    )}
+                    
+                    <div className="flex justify-between text-gray-700">
+                        <span>Service Fee:</span>
+                        <span>Rp {fee.toLocaleString()}</span>
+                    </div>
+                    <div className="border-t pt-3 flex justify-between text-lg font-bold text-gray-900">
+                        <span>Total:</span>
+                        <span>Rp {finalPrice.toLocaleString()}</span>
+                    </div>
+
+                    {activeDiscount && (
+                        <p className="text-xs text-gray-500 text-center mt-2">
+                            You save Rp {discountAmount.toLocaleString()}!
+                        </p>
                     )}
                 </div>
 
