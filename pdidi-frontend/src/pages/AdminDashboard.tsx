@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
 import { getBalance, addBalance, subtractBalance, getOrders, toggleOrder, deleteOrder } from "@/service/admin.service";
 import { createDiscount } from "@/service/discount.service";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import type { BalanceResponse } from "@/dtos/balance.dto";
 import type { OrderResponse } from "@/dtos/order.dto";
 import { useNavigate } from "react-router";
@@ -136,181 +133,183 @@ export default function AdminDashboard() {
         }
     }
 
-    if (loading) return <div className="p-6">Loading...</div>
+    if (loading) return <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center"><p className="text-muted">Loading...</p></div>
 
     const lastUpdated = balanceData?.updatedAt
         ? new Date(balanceData.updatedAt).toLocaleString()
         : 'Never'
 
     return (
-        <div className="p-6 space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-                <Button
-                    onClick={() => navigate("/admin/manage")}
-                    className="bg-gray-600 hover:bg-gray-700 text-white flex items-center gap-2"
-                >
-                    Manage <ChevronRight className="w-4 h-4" />
-                </Button>
-            </div>
-            {error && <div className="p-4 bg-red-50 text-red-500 rounded-lg">{error}</div>}
-            <div className="flex justify-center gap-6">
-                <div className="bg-white rounded-lg shadow p-6 max-w-md">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-2">Total Balance</h2>
-                    <p className="text-4xl font-bold text-blue-600">Rp.{balanceData?.balance?.toLocaleString()}</p>
-                    <p className="text-sm text-gray-500 mt-4">Last updated: {lastUpdated}</p>
-
-                    <div className="mt-6 flex flex-col gap-4">
-                        <Input
-                            type="number"
-                            placeholder="Enter amount"
-                            value={amount}
-                            onChange={(e) => setAmount(e.target.value)}
-                            disabled={operationLoading}
-                            className="h-10"
-                        />
-
-                        <div className="flex gap-2">
-                            <Button
-                                onClick={handleAdd}
-                                disabled={operationLoading}
-                                className="flex-1 bg-green-600 hover:bg-green-700 text-white"
-                            >
-                                {operationLoading ? "Processing..." : "Add"}
-                            </Button>
-                            <Button
-                                onClick={handleSubtract}
-                                disabled={operationLoading}
-                                className="flex-1 bg-red-600 hover:bg-red-700 text-white"
-                            >
-                                {operationLoading ? "Processing..." : "Subtract"}
-                            </Button>
-                        </div>
-                    </div>
+        <div className="min-h-[calc(100vh-8rem)] bg-canvas">
+            <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
+                <div className="flex items-center justify-between">
+                    <h1 className="text-xl font-semibold tracking-tight text-ink">Dashboard</h1>
+                    <button
+                        onClick={() => navigate("/admin/manage")}
+                        className="h-9 px-4 rounded-lg bg-surface-card text-ink text-sm font-medium transition-colors hover:bg-surface-card inline-flex items-center gap-1.5"
+                    >
+                        Manage <ChevronRight className="size-4" />
+                    </button>
                 </div>
 
-                <div className="bg-white rounded-lg shadow p-6 max-w-md">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Create Discount</h2>
+                {error && <p className="text-error text-sm">{error}</p>}
 
-                    <div className="flex flex-col gap-4">
-                        <div>
-                            <Label className="text-sm font-medium text-gray-700">Discount Rate (%)</Label>
-                            <Input
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="rounded-xl bg-surface-card p-5">
+                        <h2 className="text-sm font-semibold text-ink">Balance</h2>
+                        <p className="text-3xl font-bold text-primary mt-2">Rp {balanceData?.balance?.toLocaleString()}</p>
+                        <p className="text-xs text-muted mt-1">Last updated: {lastUpdated}</p>
+
+                        <div className="mt-5 space-y-3">
+                            <input
                                 type="number"
-                                placeholder="e.g. 15"
-                                value={discountRate}
-                                onChange={(e) => setDiscountRate(e.target.value)}
-                                disabled={discountLoading}
-                                className="h-10 mt-1"
-                                min="0"
-                                max="100"
-                            />
-                        </div>
-
-                        <div>
-                            <Label className="text-sm font-medium text-gray-700">Slot Quantity</Label>
-                            <Input
-                                type="number"
-                                placeholder="e.g. 50"
-                                value={slotQuantity}
-                                onChange={(e) => setSlotQuantity(e.target.value)}
-                                disabled={discountLoading}
-                                className="h-10 mt-1"
-                                min="1"
-                            />
-                        </div>
-
-                        <div>
-                            <Label className="text-sm font-medium text-gray-700">Valid Until</Label>
-                            <Input
-                                type="datetime-local"
-                                value={validUntil}
-                                onChange={(e) => setValidUntil(e.target.value)}
-                                disabled={discountLoading}
-                                className="h-10 mt-1"
+                                placeholder="Enter amount"
+                                value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                                disabled={operationLoading}
+                                className="w-full h-9 px-3 rounded-lg bg-white border border-hairline text-ink text-sm placeholder:text-muted-soft focus:outline-none focus:border-primary transition-colors"
                             />
                             <div className="flex gap-2">
-                                <Button onClick={() => setValidUntil(formatDateLocal(10))} className="flex-1 text-xs bg-gray-500 hover:bg-gray-600 text-white">+10m</Button>
-                                <Button onClick={() => setValidUntil(formatDateLocal(15))} className="flex-1 text-xs bg-gray-500 hover:bg-gray-600 text-white">+15m</Button>
-                                <Button onClick={() => setValidUntil(formatDateLocal(20))} className="flex-1 text-xs bg-gray-500 hover:bg-gray-600 text-white">+20m</Button>
+                                <button
+                                    onClick={handleAdd}
+                                    disabled={operationLoading}
+                                    className="flex-1 h-9 rounded-lg bg-primary text-on-primary text-sm font-medium transition-colors hover:bg-primary-active disabled:opacity-50"
+                                >
+                                    {operationLoading ? "Processing..." : "Add"}
+                                </button>
+                                <button
+                                    onClick={handleSubtract}
+                                    disabled={operationLoading}
+                                    className="flex-1 h-9 rounded-lg border border-hairline bg-canvas text-ink text-sm font-medium transition-colors hover:bg-surface-card disabled:opacity-50"
+                                >
+                                    {operationLoading ? "Processing..." : "Subtract"}
+                                </button>
                             </div>
                         </div>
+                    </div>
 
-                        <Button
-                            onClick={handleCreateDiscount}
-                            disabled={discountLoading}
-                            className="bg-purple-600 hover:bg-purple-700 text-white"
-                        >
-                            {discountLoading ? "Creating..." : "Create Discount"}
-                        </Button>
+                    <div className="rounded-xl bg-surface-card p-5">
+                        <h2 className="text-sm font-semibold text-ink">Create discount</h2>
+
+                        <div className="mt-4 space-y-3">
+                            <div>
+                                <label className="text-xs text-muted font-medium block mb-1">Discount rate (%)</label>
+                                <input
+                                    type="number"
+                                    placeholder="e.g. 15"
+                                    value={discountRate}
+                                    onChange={(e) => setDiscountRate(e.target.value)}
+                                    disabled={discountLoading}
+                                    className="w-full h-9 px-3 rounded-lg bg-white border border-hairline text-ink text-sm placeholder:text-muted-soft focus:outline-none focus:border-primary transition-colors"
+                                    min="0"
+                                    max="100"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-xs text-muted font-medium block mb-1">Slot quantity</label>
+                                <input
+                                    type="number"
+                                    placeholder="e.g. 50"
+                                    value={slotQuantity}
+                                    onChange={(e) => setSlotQuantity(e.target.value)}
+                                    disabled={discountLoading}
+                                    className="w-full h-9 px-3 rounded-lg bg-white border border-hairline text-ink text-sm placeholder:text-muted-soft focus:outline-none focus:border-primary transition-colors"
+                                    min="1"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-xs text-muted font-medium block mb-1">Valid until</label>
+                                <input
+                                    type="datetime-local"
+                                    value={validUntil}
+                                    onChange={(e) => setValidUntil(e.target.value)}
+                                    disabled={discountLoading}
+                                    className="w-full h-9 px-3 rounded-lg bg-white border border-hairline text-ink text-sm focus:outline-none focus:border-primary transition-colors"
+                                />
+                                <div className="flex gap-2 mt-2">
+                                    <button onClick={() => setValidUntil(formatDateLocal(10))} className="flex-1 h-7 rounded-md bg-white border border-hairline text-muted text-xs font-medium transition-colors hover:bg-surface-card">+10m</button>
+                                    <button onClick={() => setValidUntil(formatDateLocal(15))} className="flex-1 h-7 rounded-md bg-white border border-hairline text-muted text-xs font-medium transition-colors hover:bg-surface-card">+15m</button>
+                                    <button onClick={() => setValidUntil(formatDateLocal(20))} className="flex-1 h-7 rounded-md bg-white border border-hairline text-muted text-xs font-medium transition-colors hover:bg-surface-card">+20m</button>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={handleCreateDiscount}
+                                disabled={discountLoading}
+                                className="w-full h-9 rounded-lg bg-accent-teal text-white text-sm font-medium transition-colors hover:opacity-90 disabled:opacity-50"
+                            >
+                                {discountLoading ? "Creating..." : "Create discount"}
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="bg-white rounded-lg shadow">
-                <div className="p-6 border-b border-gray-200">
-                    <h2 className="text-lg font-semibold text-gray-900">Recent Orders</h2>
-                </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead className="bg-gray-50 border-b border-gray-200">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">User</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Menu</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Total Price</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Status</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Date</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {orders.length > 0 ? (
-                                orders.map(order => (
-                                    <tr key={order.id} className="border-b border-gray-200 hover:bg-gray-50">
-                                        <td className="px-6 py-4 text-sm text-gray-900">{order.id}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-900">{order.user?.username}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-900">{order.menu?.name}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-900">Rp. {order.total_price.toLocaleString()}</td>
-                                        <td className="px-6 py-4 text-sm">
-                                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${order.done
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-red-300 text-red-800'
-                                                }`}>
-                                                {order.done ? 'Done' : 'Not Done'}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">
-                                            {new Date(order.createdAt).toLocaleString()}
-                                        </td>
-                                        <td className="px-6 py-4 text-sm">
-                                            <Button
-                                                onClick={() => handleToggleOrder(order.id)}
-                                                disabled={toggleLoading === order.id}
-                                                className={`px-3 py-1 text-xs rounded font-medium ${order.done
-                                                    ? 'bg-gray-600 hover:bg-gray-700 text-white'
-                                                    : 'bg-blue-600 hover:bg-blue-700 text-white'
-                                                    }`}
-                                            >
-                                                {toggleLoading === order.id ? 'Updating...' : order.done ? 'Mark Not Done' : 'Mark Done'}
-                                            </Button>
-                                            <Button
-                                                onClick={() => handleDeleteOrder(order.id)}
-                                                disabled={deleteLoading === order.id}
-                                                className={`px-3 py-1 text-xs rounded font-medium bg-red-600 hover:bg-red-700 text-white`}
-                                            >
-                                                {deleteLoading === order.id ? 'Deleting...' : 'Delete Order'}
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={6} className="px-6 py-4 text-center text-gray-500">No orders found</td>
+                <div className="rounded-xl bg-surface-card overflow-hidden">
+                    <div className="px-5 py-4 border-b border-hairline">
+                        <h2 className="text-sm font-semibold text-ink">Recent orders</h2>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="border-b border-hairline">
+                                    <th className="px-5 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">ID</th>
+                                    <th className="px-5 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">User</th>
+                                    <th className="px-5 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Menu</th>
+                                    <th className="px-5 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Price</th>
+                                    <th className="px-5 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Status</th>
+                                    <th className="px-5 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Date</th>
+                                    <th className="px-5 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Actions</th>
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {orders.length > 0 ? (
+                                    orders.map(order => (
+                                        <tr key={order.id} className="border-b border-hairline hover:bg-canvas/50 transition-colors">
+                                            <td className="px-5 py-3.5 text-ink">{order.id}</td>
+                                            <td className="px-5 py-3.5 text-ink">{order.user?.username}</td>
+                                            <td className="px-5 py-3.5 text-ink">{order.menu?.name}</td>
+                                            <td className="px-5 py-3.5 text-ink">Rp {order.total_price.toLocaleString()}</td>
+                                            <td className="px-5 py-3.5">
+                                                <span className={`text-xs font-medium ${order.done ? 'text-success' : 'text-warning'}`}>
+                                                    {order.done ? 'Done' : 'Pending'}
+                                                </span>
+                                            </td>
+                                            <td className="px-5 py-3.5 text-muted text-xs">
+                                                {new Date(order.createdAt).toLocaleString()}
+                                            </td>
+                                            <td className="px-5 py-3.5">
+                                                <div className="flex gap-1.5">
+                                                    <button
+                                                        onClick={() => handleToggleOrder(order.id)}
+                                                        disabled={toggleLoading === order.id}
+                                                        className={`h-7 px-2.5 rounded-md text-xs font-medium transition-colors ${order.done
+                                                            ? 'bg-white border border-hairline text-muted hover:bg-surface-card'
+                                                            : 'bg-primary text-on-primary hover:bg-primary-active'
+                                                        } disabled:opacity-50`}
+                                                    >
+                                                        {toggleLoading === order.id ? '...' : order.done ? 'Undo' : 'Done'}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDeleteOrder(order.id)}
+                                                        disabled={deleteLoading === order.id}
+                                                        className="h-7 px-2.5 rounded-md bg-white border border-hairline text-muted text-xs font-medium transition-colors hover:bg-error hover:text-white hover:border-error disabled:opacity-50"
+                                                    >
+                                                        {deleteLoading === order.id ? '...' : 'Delete'}
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={7} className="px-5 py-8 text-center text-muted text-xs">No orders found</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

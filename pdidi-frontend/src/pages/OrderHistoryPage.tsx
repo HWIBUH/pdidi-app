@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import { getOrdersByUserId } from "@/service/order.service";
 import type { OrderResponse } from "@/dtos/order.dto";
 import { useUser } from "@/context/user-storage";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Clock, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 
 export default function OrderHistoryPage() {
     const { user } = useUser()
@@ -22,62 +21,49 @@ export default function OrderHistoryPage() {
             .finally(() => setLoading(false))
     }, [user?.id])
 
-    if (loading) return <div className="p-6">Loading...</div>
+    if (loading) return <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center"><p className="text-muted">Loading...</p></div>
 
     return (
-        <div className="p-6 space-y-6">
-            <div className="flex items-center gap-4 mb-6">
-                <Button
+        <div className="px-4 py-8 max-w-4xl mx-auto">
+            <div className="flex items-center gap-3 mb-8">
+                <button
                     onClick={() => navigate("/menu")}
-                    className="bg-gray-600 hover:bg-gray-700 text-white flex items-center gap-2"
+                    className="h-9 px-3 rounded-lg bg-surface-card text-muted text-sm font-medium transition-colors hover:bg-surface-card inline-flex items-center gap-1.5"
                 >
-                    <ChevronLeft className="w-4 h-4" /> Menu
-                </Button>
-                <h1 className="text-2xl font-bold text-gray-900">My Orders</h1>
+                    <ChevronLeft className="size-4" /> Menu
+                </button>
+                <h1 className="text-2xl font-semibold tracking-tight text-ink">My orders</h1>
             </div>
 
-            <div className="bg-white rounded-lg shadow">
-                <div className="p-6 border-b border-gray-200">
-                    <h2 className="text-lg font-semibold text-gray-900">Order History</h2>
-                    {error && <div className="p-6 text-red-500">{error}</div>}
-                </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead className="bg-gray-50 border-b border-gray-200">
-                            <tr>
-                                <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">Menu</th>
-                                <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">Total Price</th>
-                                <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">Status</th>
-                                <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {orders.length > 0 ? (
-                                orders.map(order => (
-                                    <tr key={order.id} className="border-b border-gray-200 hover:bg-gray-50">
-                                        <td className="px-6 py-4 text-sm text-gray-900">{order.menu?.name}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-900">Rp. {order.total_price.toLocaleString()}</td>
-                                        <td className="px-6 py-4 text-sm">
-                                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${order.done
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-red-100 text-red-800'
-                                                }`}>
-                                                {order.done ? 'Completed' : 'Not Completed'}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">
-                                            {new Date(order.createdAt).toLocaleString()}
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={5} className="px-6 py-4 text-center text-gray-500">No orders yet</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+            {error && <p className="text-error text-sm mb-4">{error}</p>}
+
+            <div className="rounded-xl bg-surface-card overflow-hidden">
+                {orders.length > 0 ? (
+                    orders.map((order, i) => (
+                        <div
+                            key={order.id}
+                            className={`px-5 py-4 flex items-center gap-4 ${i < orders.length - 1 ? 'border-b border-hairline' : ''}`}
+                        >
+                            <div className={`shrink-0 ${order.done ? 'text-success' : 'text-muted'}`}>
+                                {order.done ? <CheckCircle className="size-5" /> : <Clock className="size-5" />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-ink truncate">{order.menu?.name || `Order #${order.id}`}</p>
+                                <p className="text-xs text-muted mt-0.5">
+                                    {new Date(order.createdAt).toLocaleString()}
+                                </p>
+                            </div>
+                            <div className="text-right shrink-0">
+                                <p className="text-sm font-semibold text-primary">Rp {order.total_price.toLocaleString()}</p>
+                                <p className={`text-xs font-medium mt-0.5 ${order.done ? 'text-success' : 'text-muted'}`}>
+                                    {order.done ? 'Completed' : 'Pending'}
+                                </p>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="px-5 py-12 text-center text-muted text-sm">No orders yet</div>
+                )}
             </div>
         </div>
     )

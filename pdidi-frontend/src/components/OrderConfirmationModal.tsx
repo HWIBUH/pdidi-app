@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import type { Menu } from "@/model/menu.model";
 import type { DiscountResponse } from "@/dtos/discount.dto";
@@ -30,69 +29,63 @@ export default function OrderConfirmationModal({
     const finalPrice = originalPrice - discountAmount + fee;
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full mx-4">
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-2xl font-bold text-gray-900">Confirm Order</h2>
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-lg">
+                <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-sm font-semibold text-ink">Confirm order</h2>
                     <button
                         onClick={onCancel}
-                        className="text-gray-500 hover:text-gray-700"
+                        className="text-muted hover:text-ink transition-colors"
                     >
-                        <X className="w-6 h-6" />
+                        <X className="size-5" />
                     </button>
                 </div>
 
-                <div className="space-y-4 mb-6">
-                    <div className="border-b pb-4">
-                        <h3 className="text-lg font-semibold text-gray-900">{selectedMenu.name}</h3>
+                <div className="space-y-3 mb-6">
+                    <div className="pb-3 border-b border-hairline">
+                        <h3 className="text-base font-medium text-ink">{selectedMenu.name}</h3>
                         {selectedMenu.description && (
-                            <p className="text-sm text-gray-500 mt-2">{selectedMenu.description}</p>
+                            <p className="text-sm text-muted mt-1">{selectedMenu.description}</p>
                         )}
                     </div>
 
-                    <div className="flex justify-between text-gray-700">
-                        <span>Original Price:</span>
-                        <span>Rp {originalPrice.toLocaleString()}</span>
+                    <div className="flex justify-between text-sm">
+                        <span className="text-muted">Original price</span>
+                        <span className="text-ink">Rp {originalPrice.toLocaleString()}</span>
                     </div>
 
                     {activeDiscount && (
-                        <div className="flex justify-between text-green-600 font-medium">
-                            <span>Discount ({activeDiscount.discountRate}%):</span>
-                            <span>-Rp {discountAmount.toLocaleString()}</span>
+                        <div className="flex justify-between text-sm">
+                            <span className="text-primary">Discount ({activeDiscount.discountRate}%)</span>
+                            <span className="text-primary">-Rp {discountAmount.toLocaleString()}</span>
                         </div>
                     )}
-                    
-                    <div className="flex justify-between text-gray-700">
-                        <span>Service Fee:</span>
-                        <span>Rp {fee.toLocaleString()}</span>
-                    </div>
-                    <div className="border-t pt-3 flex justify-between text-lg font-bold text-gray-900">
-                        <span>Total:</span>
-                        <span>Rp {finalPrice.toLocaleString()}</span>
+
+                    <div className="flex justify-between text-sm">
+                        <span className="text-muted">Service fee</span>
+                        <span className="text-ink">Rp {fee.toLocaleString()}</span>
                     </div>
 
-                    {activeDiscount && (
-                        <p className="text-xs text-gray-500 text-center mt-2">
-                            You save Rp {discountAmount.toLocaleString()}!
-                        </p>
-                    )}
+                    <div className="pt-3 border-t border-hairline flex justify-between text-base font-semibold">
+                        <span className="text-ink">Total</span>
+                        <span className="text-primary">Rp {finalPrice.toLocaleString()}</span>
+                    </div>
                 </div>
 
                 <div className="flex gap-3">
-                    <Button
+                    <button
                         onClick={onCancel}
-                        variant="outline"
-                        className="flex-1 h-10"
+                        className="flex-1 h-9 rounded-lg border border-hairline text-ink text-sm font-medium transition-colors hover:bg-surface-card"
                     >
                         Cancel
-                    </Button>
-                    <Button
+                    </button>
+                    <button
                         onClick={onConfirm}
                         disabled={isLoading}
-                        className="flex-1 h-10 bg-blue-600 hover:bg-blue-700 text-white"
+                        className="flex-1 h-9 rounded-lg bg-primary text-on-primary text-sm font-medium transition-colors hover:bg-primary-active disabled:opacity-50"
                     >
-                        {isLoading ? "Creating..." : "Confirm Order"}
-                    </Button>
+                        {isLoading ? "Creating..." : "Confirm order"}
+                    </button>
                 </div>
             </div>
         </div>

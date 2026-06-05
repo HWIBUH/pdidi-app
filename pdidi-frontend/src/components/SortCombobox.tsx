@@ -23,7 +23,7 @@ export default function SortCombobox({ onSortChange }: SortComboboxProps) {
         >
             <ComboboxInput
                 placeholder="Sort by..."
-                className="h-10 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
+                className="h-9"
             />
             <ComboboxContent>
                 <ComboboxEmpty>No options found.</ComboboxEmpty>

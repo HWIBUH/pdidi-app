@@ -1,6 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "@/service/auth.service";
@@ -66,18 +63,18 @@ export default function LoginPage() {
 
     return (
         <>
-            <div className="w-full h-full flex justify-center items-center px-4">
-                <div className="flex flex-col w-full max-w-sm rounded-lg shadow-sm border border-gray-300 p-8 gap-6">
-                    <div className="flex flex-col gap-2">
-                        <h2 className="text-2xl font-semibold text-gray-900">Welcome Back</h2>
-                        <p className="text-sm text-gray-600">Sign in to your account</p>
+            <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center px-4">
+                <div className="w-full max-w-sm rounded-xl bg-surface-dark p-8">
+                    <div className="mb-8">
+                        <h1 className="text-2xl font-semibold tracking-tight text-on-dark">Welcome back</h1>
+                        <p className="text-sm text-on-dark-soft mt-1">Sign in to continue</p>
                     </div>
 
-                    <div className="flex flex-col gap-4">
-                        <div className="flex flex-col gap-2">
-                            <Label className="text-sm font-medium text-gray-700">Initial</Label>
-                            <Input
-                                className="h-10 px-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium text-on-dark-soft mb-1.5">Initial</label>
+                            <input
+                                className="w-full h-10 px-3 rounded-lg bg-surface-dark-elevated border border-[#333] text-on-dark text-sm placeholder:text-on-dark-soft focus:outline-none focus:border-primary transition-colors"
                                 type="text"
                                 placeholder="e.g. GS25-1"
                                 autoComplete="off"
@@ -87,27 +84,28 @@ export default function LoginPage() {
                                     setError("")
                                 }}
                                 disabled={loading}
+                                onKeyDown={(e) => e.key === 'Enter' && handleInput()}
                             />
                             {error && (
-                                <p className="text-red-500 text-sm">{error}</p>
+                                <p className="text-error text-sm mt-1.5">{error}</p>
                             )}
                         </div>
+
+                        <button
+                            className="w-full h-10 rounded-lg bg-primary text-on-primary text-sm font-medium transition-colors hover:bg-primary-active disabled:opacity-50"
+                            onClick={handleInput}
+                            disabled={loading}
+                        >
+                            {loading ? "Signing in..." : "Sign in"}
+                        </button>
                     </div>
 
-                    <Button
-                        className="h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors disabled:opacity-50"
-                        onClick={handleInput}
-                        disabled={loading}
-                    >
-                        {loading ? "Signing In..." : "Sign In"}
-                    </Button>
-
-                    <div className="text-center text-sm text-gray-600">
+                    <p className="text-center text-sm text-on-dark-soft mt-6">
                         Don't have an account?{' '}
-                        <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium">
+                        <Link to="/register" className="text-primary hover:text-primary-active font-medium">
                             Register
                         </Link>
-                    </div>
+                    </p>
                 </div>
             </div>
 

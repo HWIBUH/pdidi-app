@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
 import { getMenuForIngredient } from '@/service/ingredients.service'
 import type { Menu } from '@/model/menu.model'
 import type { Ingredient } from '@/model/ingredient.model'
@@ -28,7 +27,6 @@ export default function MenuForIngredientModal({ isOpen, ingredient, onClose }: 
         setError(null)
         try {
             const data = await getMenuForIngredient(ingredient)
-            console.log(data)
             setMenus(data)
         } catch (err: any) {
             setError(err.response?.data?.error || 'Failed to load menus')
@@ -40,37 +38,42 @@ export default function MenuForIngredientModal({ isOpen, ingredient, onClose }: 
     if (!isOpen) return null
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl max-h-96 overflow-y-auto">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                    Menus with {ingredient?.name}
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl p-6 w-full max-w-lg mx-4 max-h-96 overflow-y-auto shadow-lg">
+                <h2 className="text-sm font-semibold text-ink mb-4">
+                    Menus with <span className="text-accent-teal">{ingredient?.name}</span>
                 </h2>
 
-                {error && <div className="mb-4 p-3 bg-red-50 text-red-500 rounded">{error}</div>}
+                {error && <p className="mb-3 text-sm text-error">{error}</p>}
 
                 {loading ? (
-                    <div className="text-center text-gray-500">Loading...</div>
+                    <p className="text-sm text-muted">Loading...</p>
                 ) : (
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                         {menus.map(menu => (
-                            <div key={menu.id} className="p-4 border border-gray-200 rounded-lg">
-                                <h3 className="font-semibold text-gray-900">{menu.name}</h3>
-                                <p className="text-sm text-gray-600">{menu.description}</p>
-                                <p className="text-sm font-medium text-blue-600 mt-2">
-                                    Rp.{menu.price.toLocaleString()}
-                                </p>
+                            <div key={menu.id} className="flex items-center justify-between px-4 py-3 rounded-lg bg-surface-card">
+                                <div>
+                                    <p className="text-sm text-ink">{menu.name}</p>
+                                    {menu.description && (
+                                        <p className="text-xs text-muted mt-0.5">{menu.description}</p>
+                                    )}
+                                </div>
+                                <p className="text-sm font-medium text-primary shrink-0 ml-4">Rp {menu.price.toLocaleString()}</p>
                             </div>
                         ))}
+                        {menus.length === 0 && !loading && (
+                            <p className="text-sm text-muted">No menus found</p>
+                        )}
                     </div>
                 )}
 
-                <div className="mt-6">
-                    <Button
+                <div className="mt-5">
+                    <button
                         onClick={onClose}
-                        className="w-full bg-gray-600 hover:bg-gray-700 text-white"
+                        className="w-full h-9 rounded-lg border border-hairline text-ink text-sm font-medium transition-colors hover:bg-surface-card"
                     >
                         Close
-                    </Button>
+                    </button>
                 </div>
             </div>
         </div>

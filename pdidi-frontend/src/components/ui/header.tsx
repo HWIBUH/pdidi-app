@@ -1,4 +1,3 @@
-import { Button } from "./button";
 import { logout } from "@/service/auth.service";
 import { useNavigate } from "react-router";
 
@@ -13,24 +12,23 @@ export default function Header(
     }
 
     return (
-        <div className="w-full flex items-center justify-between py-5 px-6 border-b border-gray-200">
-            <div className="flex flex-col">
-                <img src={`${import.meta.env.BASE_URL}catevings256.png`} alt="CatEVinGS" className="h-10 w-auto" />
-            </div>
-            <div className="flex items-center gap-4">
-                {user && (
-                    <>
-                        <p className="text-gray-600 animate-bounce">Hello <strong>{user}</strong>!</p>
-
-                        <Button
-                            onClick={handleLogout}
-                            className="h-9 px-4 bg-red-600 hover:bg-red-700 text-white rounded-md font-medium transition-colors"
-                        >
-                            Logout
-                        </Button>
-                    </>
-                )}
-            </div>
-        </div>
+        <header className="w-full flex items-center justify-between px-6 py-4 border-b border-hairline bg-canvas">
+            <img
+                src={`${import.meta.env.BASE_URL}catevings256.png`}
+                alt="CatEVinGS"
+                className="h-8 w-auto"
+            />
+            {user && (
+                <div className="flex items-center gap-4">
+                    <span className="text-sm text-body">Hello <strong className="text-ink">{user}</strong>!</span>
+                    <button
+                        onClick={handleLogout}
+                        className="h-8 px-3 rounded-md bg-primary text-on-primary text-sm font-medium transition-colors hover:bg-primary-active"
+                    >
+                        Logout
+                    </button>
+                </div>
+            )}
+        </header>
     )
 }

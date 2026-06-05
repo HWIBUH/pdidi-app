@@ -1,7 +1,4 @@
 import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { getAllMenus, createMenu, deleteMenu } from '@/service/menu.service'
 import { mapIngredientToMenu } from '@/service/admin.service'
 import type { Menu } from '@/model/menu.model'
@@ -10,7 +7,7 @@ import { createIngredient, deleteIngredient, getAllIngredients, toggleIngredient
 import MenuForIngredientModal from '@/components/MenuForIngredientModal'
 import IngredientsForMenuModal from '@/components/IngredientForMenuModal'
 import { useNavigate } from 'react-router'
-import { ChevronLeft, Utensils } from 'lucide-react'
+import { ChevronLeft, Utensils, Plus, X } from 'lucide-react'
 import { updateMenu } from '@/service/menu.service'
 import { compressImage } from '@/utils/compress-image'
 
@@ -152,305 +149,272 @@ export default function AdminManage() {
         }
     }
 
-    if (loading) return <div className="p-6">Loading...</div>
+    if (loading) return <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center"><p className="text-muted">Loading...</p></div>
 
     return (
-        <div className="p-6 min-h-screen bg-white">
-            <div className="flex items-center gap-4 mb-6">
-                <Button
-                    onClick={() => navigate("/admin/dashboard")}
-                    className="bg-gray-600 hover:bg-gray-700 text-white flex items-center gap-2"
-                >
-                    <ChevronLeft className="w-4 h-4" /> Dashboard
-                </Button>
-                <h1 className="text-2xl font-bold text-gray-900">Manage</h1>
-            </div>
-            {error && <div className="mb-4 p-4 bg-red-50 text-red-500 rounded-lg">{error}</div>}
+        <div className="min-h-[calc(100vh-8rem)] bg-canvas">
+            <div className="max-w-6xl mx-auto px-4 py-8">
+                <div className="flex items-center gap-3 mb-8">
+                    <button
+                        onClick={() => navigate("/admin/dashboard")}
+                        className="h-9 px-3 rounded-lg bg-surface-card text-ink text-sm font-medium transition-colors hover:bg-surface-card inline-flex items-center gap-1.5"
+                    >
+                        <ChevronLeft className="size-4" /> Dashboard
+                    </button>
+                    <h1 className="text-xl font-semibold tracking-tight text-ink">Manage</h1>
+                </div>
 
-            <div className="flex gap-4 mb-6">
-                <button
-                    onClick={() => setActiveTab('menus')}
-                    className={`px-4 py-2 rounded-lg font-medium ${activeTab === 'menus'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
-                        }`}
-                >
-                    Manage Menus
-                </button>
-                <button
-                    onClick={() => setActiveTab('ingredients')}
-                    className={`px-4 py-2 rounded-lg font-medium ${activeTab === 'ingredients'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
-                        }`}
-                >
-                    Manage Ingredients
-                </button>
-                <button
-                    onClick={() => setActiveTab('map')}
-                    className={`px-4 py-2 rounded-lg font-medium ${activeTab === 'map'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
-                        }`}
-                >
-                    Map Ingredients
-                </button>
-            </div>
+                {error && <p className="text-error text-sm mb-4">{error}</p>}
 
-            {activeTab === 'menus' && (
-                <div className="space-y-6">
-                    <div className="bg-white rounded-lg shadow p-6">
-                        <h2 className="text-lg font-semibold text-gray-900 mb-4">Create Menu</h2>
-                        <div className="space-y-3">
-                            <div>
-                                <Label>Menu Name</Label>
-                                <Input
+                <div className="flex gap-2 mb-6">
+                    {(['menus', 'ingredients', 'map'] as const).map(tab => (
+                        <button
+                            key={tab}
+                            onClick={() => setActiveTab(tab)}
+                            className={`h-9 px-4 rounded-lg text-sm font-medium transition-colors ${
+                                activeTab === tab
+                                    ? 'bg-primary text-on-primary'
+                                    : 'bg-surface-card text-ink hover:bg-surface-card'
+                            }`}
+                        >
+                            {tab === 'menus' ? 'Menus' : tab === 'ingredients' ? 'Ingredients' : 'Map'}
+                        </button>
+                    ))}
+                </div>
+
+                {activeTab === 'menus' && (
+                    <div className="space-y-6">
+                        <div className="rounded-xl bg-surface-card p-5">
+                            <h2 className="text-sm font-semibold text-ink mb-4">Create menu</h2>
+                            <div className="space-y-3">
+                                <input
+                                    placeholder="Menu name"
                                     value={menuName}
                                     onChange={(e) => setMenuName(e.target.value)}
-                                    className="mt-1"
+                                    className="w-full h-9 px-3 rounded-lg bg-white border border-hairline text-ink text-sm placeholder:text-muted-soft focus:outline-none focus:border-primary transition-colors"
                                 />
-                            </div>
-                            <div>
-                                <Label>Price</Label>
-                                <Input
+                                <input
                                     type="number"
+                                    placeholder="Price"
                                     value={menuPrice}
                                     onChange={(e) => setMenuPrice(e.target.value)}
-                                    className="mt-1"
+                                    className="w-full h-9 px-3 rounded-lg bg-white border border-hairline text-ink text-sm placeholder:text-muted-soft focus:outline-none focus:border-primary transition-colors"
                                 />
-                            </div>
-                            <div>
-                                <Label>Description</Label>
-                                <Input
+                                <input
+                                    placeholder="Description"
                                     value={menuDescription}
                                     onChange={(e) => setMenuDescription(e.target.value)}
-                                    className="mt-1"
+                                    className="w-full h-9 px-3 rounded-lg bg-white border border-hairline text-ink text-sm placeholder:text-muted-soft focus:outline-none focus:border-primary transition-colors"
                                 />
+                                <button
+                                    onClick={handleCreateMenu}
+                                    className="h-9 px-4 rounded-lg bg-primary text-on-primary text-sm font-medium transition-colors hover:bg-primary-active inline-flex items-center gap-1.5"
+                                >
+                                    <Plus className="size-4" /> Create menu
+                                </button>
                             </div>
-                            <Button
-                                onClick={handleCreateMenu}
-                                className="bg-green-600 hover:bg-green-700 text-white"
-                            >
-                                Create Menu
-                            </Button>
                         </div>
-                    </div>
 
-                    <div className="bg-white rounded-lg shadow overflow-hidden">
-                        <div className="p-6 border-b">
-                            <h2 className="text-lg font-semibold text-gray-900">Menus</h2>
-                        </div>
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead className="bg-gray-50 border-b">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Image</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Name</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Price</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Description</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Availability</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {menus.map(menu => (
-                                        <tr key={menu.id} className="border-b hover:bg-gray-50">
-                                            <td className="px-6 py-4 text-sm text-gray-900">
-                                                {menu.image ? (
-                                                    <img src={menu.image} alt={menu.name} className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <Utensils className="text-6xl text-gray-400" />
-                                                )}
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-gray-900">{menu.name}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-900">Rp.{menu.price.toLocaleString()}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-500">{menu.description}</td>
-                                            <td className="px-6 py-4 text-sm text-gray-500">
-                                                <span className={`px-3 py-1 rounded-full text-xs font-medium ${menu.available
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : 'bg-red-100 text-red-800'
-                                                    }`}>
-                                                    {menu.available ? 'Available' : 'Unavailable'}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm">
-                                                <div className="flex flex-col gap-2">
-                                                    <Button
-                                                        onClick={() => {
-                                                            setSelectedMenu(menu)
-                                                            setIsIngredientsModalOpen(true)
-                                                        }}
-                                                        className="bg-green-600 hover:bg-green-700 text-white text-xs"
-                                                    >
-                                                        Show Ingredients
-                                                    </Button>
-                                                    <Input
-                                                        id={`upload-${menu.id}`}
-                                                        type="file"
-                                                        accept="image/*"
-                                                        onChange={(e) => {
-                                                            if (e.target.files?.[0]) {
-                                                                handleImageUpload(menu.id, e.target.files[0])
-                                                            }
-                                                        }}
-                                                        disabled={uploadingMenuId === menu.id}
-                                                        className="cursor-pointer"
-                                                    />
-                                                    <Button
-                                                        onClick={() => handleDeleteMenu(menu.id)}
-                                                        className="bg-red-600 hover:bg-red-700 text-white text-xs"
-                                                    >
-                                                        Delete
-                                                    </Button>
-                                                </div>
-                                            </td>
+                        <div className="rounded-xl bg-surface-card overflow-hidden">
+                            <div className="px-5 py-4 border-b border-hairline">
+                                <h2 className="text-sm font-semibold text-ink">Menus</h2>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr className="border-b border-hairline">
+                                            <th className="px-5 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Image</th>
+                                            <th className="px-5 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Name</th>
+                                            <th className="px-5 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Price</th>
+                                            <th className="px-5 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Description</th>
+                                            <th className="px-5 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Avail.</th>
+                                            <th className="px-5 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Actions</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {menus.map(menu => (
+                                            <tr key={menu.id} className="border-b border-hairline hover:bg-canvas/50 transition-colors">
+                                                <td className="px-5 py-3.5">
+                                                    <div className="size-10 rounded-md bg-surface-dark-soft flex items-center justify-center overflow-hidden">
+                                                        {menu.image ? (
+                                                            <img src={menu.image} alt={menu.name} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            <Utensils className="size-4 text-muted-soft" />
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td className="px-5 py-3.5 text-ink font-medium">{menu.name}</td>
+                                                <td className="px-5 py-3.5 text-ink">Rp {menu.price.toLocaleString()}</td>
+                                                <td className="px-5 py-3.5 text-muted text-xs max-w-40 truncate">{menu.description}</td>
+                                                <td className="px-5 py-3.5">
+                                                    <span className={`text-xs font-medium ${menu.available ? 'text-success' : 'text-muted'}`}>
+                                                        {menu.available ? 'Yes' : 'No'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-5 py-3.5">
+                                                    <div className="flex gap-1.5 flex-wrap">
+                                                        <button
+                                                            onClick={() => { setSelectedMenu(menu); setIsIngredientsModalOpen(true) }}
+                                                            className="h-7 px-2.5 rounded-md bg-accent-teal text-white text-xs font-medium transition-colors hover:opacity-90"
+                                                        >
+                                                            Ingredients
+                                                        </button>
+                                                        <label className="h-7 px-2.5 rounded-md bg-white border border-hairline text-muted text-xs font-medium transition-colors hover:bg-surface-card cursor-pointer inline-flex items-center">
+                                                            Image
+                                                            <input
+                                                                type="file"
+                                                                accept="image/*"
+                                                                onChange={(e) => { if (e.target.files?.[0]) handleImageUpload(menu.id, e.target.files[0]) }}
+                                                                disabled={uploadingMenuId === menu.id}
+                                                                className="hidden"
+                                                            />
+                                                        </label>
+                                                        <button
+                                                            onClick={() => handleDeleteMenu(menu.id)}
+                                                            className="h-7 px-2.5 rounded-md bg-white border border-hairline text-muted text-xs font-medium transition-colors hover:bg-error hover:text-white hover:border-error"
+                                                        >
+                                                            <X className="size-3" />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
+                        <IngredientsForMenuModal
+                            isOpen={isIngredientsModalOpen}
+                            menu={selectedMenu}
+                            onClose={() => setIsIngredientsModalOpen(false)}
+                        />
                     </div>
-                    <IngredientsForMenuModal
-                        isOpen={isIngredientsModalOpen}
-                        menu={selectedMenu}
-                        onClose={() => setIsIngredientsModalOpen(false)}
-                    />
-                </div>
-            )}
+                )}
 
-            {activeTab === 'ingredients' && (
-                <div className="space-y-6">
-                    <div className="bg-white rounded-lg shadow p-6">
-                        <h2 className="text-lg font-semibold text-gray-900 mb-4">Create Ingredient</h2>
-                        <div className="space-y-3">
-                            <div>
-                                <Label>Ingredient Name</Label>
-                                <Input
+                {activeTab === 'ingredients' && (
+                    <div className="space-y-6">
+                        <div className="rounded-xl bg-surface-card p-5">
+                            <h2 className="text-sm font-semibold text-ink mb-4">Create ingredient</h2>
+                            <div className="space-y-3">
+                                <input
+                                    placeholder="Ingredient name"
                                     value={ingredientName}
                                     onChange={(e) => setIngredientName(e.target.value)}
-                                    className="mt-1"
+                                    className="w-full h-9 px-3 rounded-lg bg-white border border-hairline text-ink text-sm placeholder:text-muted-soft focus:outline-none focus:border-primary transition-colors"
                                 />
+                                <button
+                                    onClick={handleCreateIngredient}
+                                    className="h-9 px-4 rounded-lg bg-primary text-on-primary text-sm font-medium transition-colors hover:bg-primary-active inline-flex items-center gap-1.5"
+                                >
+                                    <Plus className="size-4" /> Create ingredient
+                                </button>
                             </div>
-                            <Button
-                                onClick={handleCreateIngredient}
-                                className="bg-green-600 hover:bg-green-700 text-white"
-                            >
-                                Create Ingredient
-                            </Button>
                         </div>
-                    </div>
 
-                    <div className="bg-white rounded-lg shadow overflow-hidden">
-                        <div className="p-6 border-b">
-                            <h2 className="text-lg font-semibold text-gray-900">Ingredients</h2>
-                        </div>
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead className="bg-gray-50 border-b">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Name</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Status</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {ingredients.map(ingredient => (
-                                        <tr key={ingredient.id} className="border-b hover:bg-gray-50">
-                                            <td className="px-6 py-4 text-sm text-gray-900">{ingredient.name}</td>
-                                            <td className="px-6 py-4 text-sm">
-                                                <span className={`px-3 py-1 rounded-full text-xs font-medium ${ingredient.available
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : 'bg-red-100 text-red-800'
-                                                    }`}>
-                                                    {ingredient.available ? 'Available' : 'Unavailable'}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm flex gap-2">
-                                                <Button
-                                                    onClick={() => {
-                                                        setSelectedIngredient(ingredient)
-                                                        setIsMenusModalOpen(true)
-                                                    }}
-                                                    className="bg-green-600 hover:bg-green-700 text-white text-xs"
-                                                >
-                                                    Show Menus
-                                                </Button>
-                                                <Button
-                                                    onClick={() => handleToggleIngredient(ingredient.id)}
-                                                    className="bg-blue-600 hover:bg-blue-700 text-white text-xs"
-                                                >
-                                                    Toggle Availability
-                                                </Button>
-                                                <Button
-                                                    onClick={() => handleDeleteIngredient(ingredient.id)}
-                                                    className="bg-red-600 hover:bg-red-700 text-white text-xs"
-                                                >
-                                                    Delete
-                                                </Button>
-                                            </td>
+                        <div className="rounded-xl bg-surface-card overflow-hidden">
+                            <div className="px-5 py-4 border-b border-hairline">
+                                <h2 className="text-sm font-semibold text-ink">Ingredients</h2>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr className="border-b border-hairline">
+                                            <th className="px-5 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Name</th>
+                                            <th className="px-5 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Status</th>
+                                            <th className="px-5 py-3 text-left text-xs font-medium text-muted uppercase tracking-wide">Actions</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {ingredients.map(ingredient => (
+                                            <tr key={ingredient.id} className="border-b border-hairline hover:bg-canvas/50 transition-colors">
+                                                <td className="px-5 py-3.5 text-ink font-medium">{ingredient.name}</td>
+                                                <td className="px-5 py-3.5">
+                                                    <span className={`text-xs font-medium ${ingredient.available ? 'text-success' : 'text-muted'}`}>
+                                                        {ingredient.available ? 'Available' : 'Unavailable'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-5 py-3.5">
+                                                    <div className="flex gap-1.5">
+                                                        <button
+                                                            onClick={() => { setSelectedIngredient(ingredient); setIsMenusModalOpen(true) }}
+                                                            className="h-7 px-2.5 rounded-md bg-accent-teal text-white text-xs font-medium transition-colors hover:opacity-90"
+                                                        >
+                                                            Menus
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleToggleIngredient(ingredient.id)}
+                                                            className="h-7 px-2.5 rounded-md bg-white border border-hairline text-muted text-xs font-medium transition-colors hover:bg-surface-card"
+                                                        >
+                                                            Toggle
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDeleteIngredient(ingredient.id)}
+                                                            className="h-7 px-2.5 rounded-md bg-white border border-hairline text-muted text-xs font-medium transition-colors hover:bg-error hover:text-white hover:border-error"
+                                                        >
+                                                            <X className="size-3" />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
+                        <MenuForIngredientModal
+                            isOpen={isMenusModalOpen}
+                            ingredient={selectedIngredient}
+                            onClose={() => setIsMenusModalOpen(false)}
+                        />
                     </div>
-                    <MenuForIngredientModal
-                        isOpen={isMenusModalOpen}
-                        ingredient={selectedIngredient}
-                        onClose={() => setIsMenusModalOpen(false)}
-                    />
-                </div>
-            )}
+                )}
 
-            {activeTab === 'map' && (
-                <div className="bg-white rounded-lg shadow p-6">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Map Ingredient to Menu</h2>
-                    <div className="space-y-4">
-                        <div>
-                            <Label>Select Menu</Label>
-                            <select
-                                value={selectedMenu?.id || ''}
-                                onChange={(e) => {
-                                    const menu = menus.find(m => m.id === Number(e.target.value))
-                                    setSelectedMenu(menu || null)
-                                }}
-                                className="w-full mt-1 p-2 border border-gray-300 rounded-md"
+                {activeTab === 'map' && (
+                    <div className="rounded-xl bg-surface-card p-5 max-w-lg">
+                        <h2 className="text-sm font-semibold text-ink mb-4">Map ingredient to menu</h2>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="text-xs text-muted font-medium block mb-1.5">Menu</label>
+                                <select
+                                    value={selectedMenu?.id || ''}
+                                    onChange={(e) => {
+                                        const menu = menus.find(m => m.id === Number(e.target.value))
+                                        setSelectedMenu(menu || null)
+                                    }}
+                                    className="w-full h-9 px-3 rounded-lg bg-white border border-hairline text-ink text-sm focus:outline-none focus:border-primary transition-colors"
+                                >
+                                    <option value="">Choose a menu...</option>
+                                    {menus.map(menu => (
+                                        <option key={menu.id} value={menu.id}>{menu.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="text-xs text-muted font-medium block mb-1.5">Ingredient</label>
+                                <select
+                                    value={selectedIngredient?.id || ''}
+                                    onChange={(e) => {
+                                        const ingredient = ingredients.find(i => i.id === Number(e.target.value))
+                                        setSelectedIngredient(ingredient || null)
+                                    }}
+                                    className="w-full h-9 px-3 rounded-lg bg-white border border-hairline text-ink text-sm focus:outline-none focus:border-primary transition-colors"
+                                >
+                                    <option value="">Choose an ingredient...</option>
+                                    {ingredients.map(ingredient => (
+                                        <option key={ingredient.id} value={ingredient.id}>{ingredient.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <button
+                                onClick={handleMapIngredient}
+                                className="w-full h-9 rounded-lg bg-primary text-on-primary text-sm font-medium transition-colors hover:bg-primary-active"
                             >
-                                <option value="">Choose a menu...</option>
-                                {menus.map(menu => (
-                                    <option key={menu.id} value={menu.id}>
-                                        {menu.name}
-                                    </option>
-                                ))}
-                            </select>
+                                Map ingredient to menu
+                            </button>
                         </div>
-                        <div>
-                            <Label>Select Ingredient</Label>
-                            <select
-                                value={selectedIngredient?.id || ''}
-                                onChange={(e) => {
-                                    const ingredient = ingredients.find(i => i.id === Number(e.target.value))
-                                    setSelectedIngredient(ingredient || null)
-                                }}
-                                className="w-full mt-1 p-2 border border-gray-300 rounded-md"
-                            >
-                                <option value="">Choose an ingredient...</option>
-                                {ingredients.map(ingredient => (
-                                    <option key={ingredient.id} value={ingredient.id}>
-                                        {ingredient.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <Button
-                            onClick={handleMapIngredient}
-                            className="bg-blue-600 hover:bg-blue-700 text-white w-full"
-                        >
-                            Map Ingredient to Menu
-                        </Button>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     )
 }

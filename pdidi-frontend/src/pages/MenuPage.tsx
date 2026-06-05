@@ -1,7 +1,4 @@
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { ChevronRight, ChevronsDown, ChevronsUp, Search } from "lucide-react";
+import { ChevronRight, ChevronsUp, ChevronsDown, Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getAllMenus } from "@/service/menu.service";
 import { createOrder } from "@/service/order.service";
@@ -100,130 +97,113 @@ export default function MenuPage() {
 
     if (loading) {
         return (
-            <div className="w-full h-full flex justify-center items-center">
-                <p className="text-gray-500">Loading menus...</p>
+            <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
+                <p className="text-muted">Loading menus...</p>
             </div>
         )
     }
 
     if (error) {
         return (
-            <div className="w-full h-full flex justify-center items-center">
-                <p className="text-red-500">Error: {error}</p>
+            <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
+                <p className="text-error">Error: {error}</p>
             </div>
         )
     }
 
     return (
-        <div className="h-9/10 p-2">
-            <div className="flex justify-between items-center p-4">
-                <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-                <Button
+        <div className="px-4 py-8 max-w-7xl mx-auto">
+            <div className="flex items-center justify-between mb-8">
+                <h1 className="text-2xl font-semibold tracking-tight text-ink">Menu</h1>
+                <button
                     onClick={() => navigate("/orders")}
-                    className="bg-gray-600 hover:bg-gray-700 text-white flex items-center gap-2"
+                    className="h-9 px-4 rounded-lg bg-surface-dark text-on-dark text-sm font-medium transition-colors hover:bg-surface-dark-elevated inline-flex items-center gap-1.5"
                 >
-                    My Orders <ChevronRight className="w-4 h-4" />
-                </Button>
+                    My orders <ChevronRight className="size-4" />
+                </button>
             </div>
 
             {activeDiscount && (
-                <div className="col-span-8 bg-linear-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-6 mt-6 mb-6 shadow-sm">
-                    <div className="flex items-center justify-between gap-6">
-                        <div className="flex-1">
-                            <div className="flex items-center gap-3 mb-2">
-                                <h3 className="font-bold text-amber-900 text-xl">Discount!</h3>
-                            </div>
-                            <p className="text-amber-800 text-sm mb-2">enjoy <span className="font-bold text-lg">{activeDiscount.discountRate}%</span> discount on all items until {timeRemaining}</p>
-                            <div className="flex items-center gap-4 text-sm">
-                                <span className="text-amber-700">
-                                    <span className="font-bold text-amber-900">{activeDiscount.slotQuantity - activeDiscount.slotsUsed}</span> slots left
-                                </span>
-                                <div className="w-32 h-1 bg-amber-200 rounded-full overflow-hidden">
-                                    <div
-                                        className="h-full bg-linear-to-r from-amber-500 to-orange-500"
-                                        style={{
-                                            width: `${((activeDiscount.slotQuantity - activeDiscount.slotsUsed) / activeDiscount.slotQuantity) * 100}%`
-                                        }}
-                                    />
-                                </div>
-                            </div>
+                <div className="rounded-xl bg-surface-card p-5 mb-8 border-l-4 border-primary">
+                    <div className="flex items-center justify-between gap-4">
+                        <div>
+                            <p className="text-sm font-semibold text-ink">Discount active</p>
+                            <p className="text-sm text-muted mt-0.5">
+                                <strong className="text-primary">{activeDiscount.discountRate}%</strong> off all items • {timeRemaining}
+                            </p>
+                            <p className="text-xs text-muted-soft mt-1">
+                                {activeDiscount.slotQuantity - activeDiscount.slotsUsed} slots remaining
+                            </p>
                         </div>
-                        <div className="text-right">
-                            <p className="text-4xl font-bold text-amber-600">{activeDiscount.discountRate}%</p>
-                            <p className="text-xs font-semibold text-amber-700 mt-1">OFF</p>
+                        <div className="text-right shrink-0">
+                            <p className="text-3xl font-bold text-primary">{activeDiscount.discountRate}%</p>
+                            <p className="text-xs text-muted font-medium">OFF</p>
                         </div>
                     </div>
                 </div>
             )}
-            <div className="w-full h-full flex justify-center pt-8 mx-auto">
-                <div className="w-full lg:w-8/10 max-w-7xl flex flex-col lg:grid lg:grid-cols-8 lg:gap-6 px-4">
-                    <div className="col-span-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-                        <div className="relative w-full max-w-md flex items-center">
-                            <Search className="absolute left-3 w-4 h-4 text-gray-500" />
-                            <Input
+
+            <div className="grid grid-cols-1 lg:grid-cols-[240px_1fr] gap-6">
+                <div className="rounded-xl bg-surface-card p-5 h-fit space-y-5">
+                    <h2 className="text-sm font-semibold text-ink">Filters</h2>
+                    <div>
+                        <label className="text-xs text-muted font-medium block mb-2">
+                            Max price: Rp {priceFilter.toLocaleString()}
+                        </label>
+                        <input
+                            type="range"
+                            min="0"
+                            max={maxPrice}
+                            value={priceFilter}
+                            onChange={(e) => setPriceFilter(Number(e.target.value))}
+                            className="w-full h-1.5 bg-hairline rounded-full appearance-none cursor-pointer accent-primary"
+                        />
+                        <div className="flex justify-between text-xs text-muted-soft mt-1">
+                            <span>0</span>
+                            <span>Rp {maxPrice.toLocaleString()}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="space-y-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                        <div className="relative flex-1 max-w-sm">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted" />
+                            <input
                                 placeholder="Search menu..."
-                                className="h-10 pl-9 pr-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                                className="w-full h-9 pl-9 pr-3 rounded-lg bg-surface-card text-ink text-sm placeholder:text-muted-soft focus:outline-none focus:ring-1 focus:ring-primary transition-colors"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
                         </div>
 
-                        <div className="flex items-center gap-3 w-full sm:w-auto">
-                            <Button
-                                variant="outline"
-                                className="flex items-center gap-2 border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 h-10 px-4 rounded-md transition-colors"
+                        <div className="flex items-center gap-2">
+                            <button
+                                className="h-9 px-3 rounded-lg bg-surface-card text-muted text-sm font-medium transition-colors hover:bg-surface-card inline-flex items-center gap-1.5"
                                 onClick={() => setOrder(!order)}
                             >
                                 {order ? (
-                                    <><ChevronsUp className="w-4 h-4" /> <p>Asc</p></>
+                                    <><ChevronsUp className="size-4" /> Asc</>
                                 ) : (
-                                    <><ChevronsDown className="w-4 h-4" /> <p>Desc</p></>
+                                    <><ChevronsDown className="size-4" /> Desc</>
                                 )}
-                            </Button>
+                            </button>
 
-                            <div className="w-48">
+                            <div className="w-36">
                                 <SortCombobox onSortChange={setSort} />
                             </div>
                         </div>
                     </div>
 
-                    <div className="w-full col-span-8 row-span-7 grid grid-cols-1 lg:grid-cols-8 gap-6">
-                        <div className="mt-6 lg:mt-0 lg:col-span-2 p-6 rounded-lg shadow-sm border border-gray-300 flex flex-col gap-6 h-fit">
-                            <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
-
-                            <div className="flex flex-col gap-4">
-                                <div className="flex flex-col gap-3">
-                                    <Label className="text-sm font-medium text-gray-700">
-                                        Max Price: {priceFilter}
-                                    </Label>
-                                    <input
-                                        type="range"
-                                        min="0"
-                                        max={maxPrice}
-                                        value={priceFilter}
-                                        onChange={(e) => setPriceFilter(Number(e.target.value))}
-                                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                                    />
-                                    <div className="flex justify-between text-xs text-gray-500 font-medium">
-                                        <span>0</span>
-                                        <span>{maxPrice}</span>
-                                    </div>
-                                </div>
-                            </div>
+                    {filteredMenus.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {filteredMenus.map(item => (
+                                <MenuCard key={item.id} item={item} handleClick={handleOrderClick} />
+                            ))}
                         </div>
-
-                        <div className="lg:col-span-6">
-                            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-                                {filteredMenus.length > 0 ? (
-                                    filteredMenus.map(item => (
-                                        <MenuCard key={item.id} item={item} handleClick={handleOrderClick} />
-                                    ))
-                                ) : (
-                                    <p className="col-span-full text-center text-gray-500">No menus found</p>
-                                )}
-                            </div>
-                        </div>
-                    </div>
+                    ) : (
+                        <p className="text-center text-muted py-12">No menus found</p>
+                    )}
                 </div>
             </div>
 

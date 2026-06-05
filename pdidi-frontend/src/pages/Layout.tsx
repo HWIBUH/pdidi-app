@@ -7,11 +7,11 @@ export default function Layout() {
   const { user } = useUser()
 
   return (
-    <div className='w-full h-full flex flex-col'>
+    <div className="min-h-screen flex flex-col bg-canvas">
       <Header user={user?.username} />
-      <div className='flex-1 w-full bg-white'>
+      <main className="flex-1">
         <Outlet />
-      </div>
+      </main>
       <Footer />
     </div>
   )
