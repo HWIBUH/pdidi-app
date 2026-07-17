@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getBalance, addBalance, subtractBalance, getOrders, toggleOrder, deleteOrder } from "@/service/admin.service";
 import { createDiscount } from "@/service/discount.service";
 import type { BalanceResponse } from "@/dtos/balance.dto";
 import type { OrderResponse } from "@/dtos/order.dto";
 import { useNavigate } from "react-router";
-import { ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { formatDateLocal } from "@/utils/format-date";
+
+const ORDERS_PER_PAGE = 10;
 
 export default function AdminDashboard() {
     const [balanceData, setBalanceData] = useState<BalanceResponse | null>(null)
@@ -22,30 +24,48 @@ export default function AdminDashboard() {
     const [validUntil, setValidUntil] = useState("")
     const [discountLoading, setDiscountLoading] = useState(false)
 
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
+    const [totalCount, setTotalCount] = useState(0)
+    const [ordersLoading, setOrdersLoading] = useState(false)
+
     const navigate = useNavigate()
 
-    const fetchData = () => {
+    const fetchData = useCallback((page: number = currentPage) => {
         Promise.all([
             getBalance(),
-            getOrders()
+            getOrders(page, ORDERS_PER_PAGE)
         ])
             .then(([balanceRes, ordersRes]) => {
                 setBalanceData(balanceRes)
-                setOrders(ordersRes)
+                setOrders(ordersRes.orders)
+                setTotalPages(ordersRes.totalPages)
+                setTotalCount(ordersRes.totalCount)
+                setCurrentPage(ordersRes.currentPage)
             })
             .catch(err => setError(err.response?.data?.error || "Failed to load data"))
-            .finally(() => setLoading(false))
-    }
+            .finally(() => {
+                setLoading(false)
+                setOrdersLoading(false)
+            })
+    }, [currentPage])
 
     useEffect(() => {
         fetchData()
     }, [])
 
+    const handlePageChange = (page: number) => {
+        if (page < 1 || page > totalPages || page === currentPage) return
+        setOrdersLoading(true)
+        fetchData(page)
+    }
+
     const handleToggleOrder = async (orderId: number) => {
         setToggleLoading(orderId)
         try {
             await toggleOrder(orderId)
-            fetchData()
+            fetchData(currentPage)
         } catch (err: any) {
             setError(err.response?.data?.error || "Failed to toggle order")
         } finally {
@@ -60,7 +80,9 @@ export default function AdminDashboard() {
         setDeleteLoading(orderId)
         try {
             await deleteOrder(orderId)
-            fetchData()
+            // If we deleted the last item on this page, go back one page
+            const newPage = orders.length === 1 && currentPage > 1 ? currentPage - 1 : currentPage
+            fetchData(newPage)
         } catch (err: any) {
             setError(err.response?.data?.error || "Failed to delete order")
         } finally {
@@ -247,10 +269,11 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="rounded-xl bg-surface-card overflow-hidden">
-                    <div className="px-5 py-4 border-b border-hairline">
+                    <div className="px-5 py-4 border-b border-hairline flex items-center justify-between">
                         <h2 className="text-sm font-semibold text-ink">Recent orders</h2>
+                        <span className="text-xs text-muted">{totalCount} total</span>
                     </div>
-                    <div className="overflow-x-auto">
+                    <div className={`overflow-x-auto transition-opacity ${ordersLoading ? 'opacity-50 pointer-events-none' : ''}`}>
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="border-b border-hairline">
@@ -310,6 +333,67 @@ export default function AdminDashboard() {
                             </tbody>
                         </table>
                     </div>
+
+                    {/* Pagination controls */}
+                    {totalPages > 1 && (
+                        <div className="px-5 py-3 border-t border-hairline flex items-center justify-between">
+                            <p className="text-xs text-muted">
+                                Page {currentPage} of {totalPages}
+                            </p>
+                            <div className="flex items-center gap-1.5">
+                                <button
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage <= 1 || ordersLoading}
+                                    className="h-8 w-8 rounded-lg border border-hairline bg-white text-ink flex items-center justify-center transition-colors hover:bg-surface-card disabled:opacity-40 disabled:cursor-not-allowed"
+                                    aria-label="Previous page"
+                                >
+                                    <ChevronLeft className="size-4" />
+                                </button>
+                                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                    .filter(page => {
+                                        // Show first, last, and pages near current
+                                        if (page === 1 || page === totalPages) return true
+                                        if (Math.abs(page - currentPage) <= 1) return true
+                                        return false
+                                    })
+                                    .reduce<(number | 'ellipsis')[]>((acc, page, idx, arr) => {
+                                        if (idx > 0 && page - (arr[idx - 1] as number) > 1) {
+                                            acc.push('ellipsis')
+                                        }
+                                        acc.push(page)
+                                        return acc
+                                    }, [])
+                                    .map((item, idx) =>
+                                        item === 'ellipsis' ? (
+                                            <span key={`ellipsis-${idx}`} className="h-8 w-6 flex items-center justify-center text-xs text-muted">
+                                                …
+                                            </span>
+                                        ) : (
+                                            <button
+                                                key={item}
+                                                onClick={() => handlePageChange(item)}
+                                                disabled={ordersLoading}
+                                                className={`h-8 min-w-8 px-2 rounded-lg text-xs font-medium transition-colors ${
+                                                    item === currentPage
+                                                        ? 'bg-primary text-on-primary'
+                                                        : 'border border-hairline bg-white text-ink hover:bg-surface-card'
+                                                } disabled:opacity-40`}
+                                            >
+                                                {item}
+                                            </button>
+                                        )
+                                    )}
+                                <button
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage >= totalPages || ordersLoading}
+                                    className="h-8 w-8 rounded-lg border border-hairline bg-white text-ink flex items-center justify-center transition-colors hover:bg-surface-card disabled:opacity-40 disabled:cursor-not-allowed"
+                                    aria-label="Next page"
+                                >
+                                    <ChevronRight className="size-4" />
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

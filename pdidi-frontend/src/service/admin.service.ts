@@ -1,5 +1,5 @@
 import type { BalanceRequest, BalanceResponse } from "@/dtos/balance.dto"
-import type { OrderResponse } from "@/dtos/order.dto"
+import type { PaginatedOrderResponse } from "@/dtos/order.dto"
 import { api } from "@/lib/axios"
 import type { Ingredient } from "@/model/ingredient.model"
 import type { Menu } from "@/model/menu.model"
@@ -27,8 +27,8 @@ export async function subtractBalance(req: BalanceRequest): Promise<BalanceRespo
     }
 }
 
-export async function getOrders(): Promise<OrderResponse[]> {
-    const res = await api.get("/order")
+export async function getOrders(page: number = 1, limit: number = 10): Promise<PaginatedOrderResponse> {
+    const res = await api.get("/order", { params: { page, limit } })
     return res.data
 }
 

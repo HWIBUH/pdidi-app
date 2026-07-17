@@ -63,13 +63,26 @@ router.post('/', async (req, res) => {
 
 router.get('/', authenticate, isAdmin, async (req, res) => {
   try {
-    const orders = await Order.findAll({
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.max(1, Math.min(100, parseInt(req.query.limit) || 10));
+    const offset = (page - 1) * limit;
+
+    const { count, rows } = await Order.findAndCountAll({
       include: [
         { model: User, as: 'user' },
         { model: Menu, as: 'menu' }
-      ]
+      ],
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset
     });
-    res.json(orders);
+
+    res.json({
+      orders: rows,
+      totalCount: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

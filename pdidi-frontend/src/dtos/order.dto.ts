@@ -17,3 +17,10 @@ export interface OrderRequest {
     user_id: number,
     menu_id: number,
 }
+
+export interface PaginatedOrderResponse {
+    orders: OrderResponse[],
+    totalCount: number,
+    totalPages: number,
+    currentPage: number
+}
